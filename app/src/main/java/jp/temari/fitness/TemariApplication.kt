@@ -9,5 +9,5 @@ import android.app.Application
  */
 class TemariApplication : Application() {
     /** アプリ全体で共有する部品。最初に使われたときに作る。 */
-    val container: AppContainer by lazy { AppContainer() }
+    val container: AppContainer by lazy { AppContainer(this) }
 }

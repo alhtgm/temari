@@ -10,8 +10,8 @@ import jp.temari.fitness.ui.home.HomeRoute
 import jp.temari.fitness.ui.onboarding.OnboardingScreen
 import jp.temari.fitness.ui.onboarding.OnboardingStep
 import jp.temari.fitness.ui.review.ReviewRoute
-import jp.temari.fitness.ui.settings.SettingsScreen
-import jp.temari.fitness.ui.staff.StaffScreen
+import jp.temari.fitness.ui.settings.SettingsRoute
+import jp.temari.fitness.ui.staff.StaffRoute
 
 /** 画面の行き先の名前（ルート）。Navigation Compose はこの文字列で画面を区別する。 */
 object Routes {
@@ -48,13 +48,13 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             BingoRoute(onBack = { navController.popBackStack() })
         }
         composable(Routes.SETTINGS) {
-            SettingsScreen(
+            SettingsRoute(
                 onBack = { navController.popBackStack() },
                 onOpenStaff = { navController.navigate(Routes.STAFF) },
             )
         }
         composable(Routes.STAFF) {
-            StaffScreen(
+            StaffRoute(
                 onBack = { navController.popBackStack() },
                 onRestartOnboarding = {
                     navController.navigate(Routes.onboarding(OnboardingStep.Welcome))

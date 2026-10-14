@@ -5,6 +5,10 @@
     <!-- 共通のボタン -->
     <string name="button_back">もどる</string>
     <string name="button_next">つぎへ</string>
+    <string name="choice_selected_mark">✓ %1$s</string>
+    <string name="goal_value">%1$,d ポイント</string>
+    <string name="goal_decrease">− へらす</string>
+    <string name="goal_increase">＋ ふやす</string>
 
     <!-- ホーム -->
     <string name="home_title">ホーム</string>
@@ -53,7 +57,6 @@
     <string name="review_title">ふりかえり</string>
     <string name="review_tab_today">きょう</string>
     <string name="review_tab_week">今週</string>
-    <string name="review_selected_mark">✓ %1$s</string>
     <string name="review_legend_walk">歩いた</string>
     <string name="review_legend_life">家のこと（しゃせん）</string>
     <string name="review_achieved_star">★</string>
@@ -97,10 +100,32 @@
     <!-- せってい -->
     <string name="settings_title">せってい</string>
     <string name="settings_staff_entry">スタッフ用</string>
+    <string name="settings_text_size_label">文字の大きさ</string>
+    <string name="text_size_large">大</string>
+    <string name="text_size_extra_large">特大</string>
+    <string name="settings_nickname_label">よび名</string>
+    <string name="settings_nickname_placeholder">れい: はなこ</string>
+    <string name="settings_nickname_save">よび名を ほぞんする</string>
+    <string name="settings_nickname_saved">✓ ほぞんしました</string>
+    <string name="settings_goal_label">1日の目標</string>
 
     <!-- スタッフ・開発用 -->
     <string name="staff_title">スタッフ・開発用</string>
     <string name="staff_button_restart_onboarding">初回設定のやり直し</string>
+    <string name="staff_section_scenario">モックデータのシナリオ</string>
+    <string name="scenario_normal">ふつうの日</string>
+    <string name="scenario_active">よく動いた日</string>
+    <string name="scenario_low">あまり動けなかった日</string>
+    <string name="scenario_stopped">記録が止まった</string>
+    <string name="scenario_first_day">はじめての日</string>
+    <string name="staff_section_user">利用者</string>
+    <string name="staff_user_id">利用者ID: %1$s</string>
+    <string name="staff_user_id_none">利用者ID: まだ発行されていません</string>
+    <string name="staff_section_later">あとの段階で作るもの</string>
+    <string name="staff_preparing">%1$s: 準備中</string>
+    <string name="staff_recording_status">記録の状態</string>
+    <string name="staff_sensor_info">センサー情報</string>
+    <string name="staff_data_export">データ書き出し</string>
 
     <!-- 初回設定 -->
     <string name="onboarding_welcome_title">ようこそ</string>

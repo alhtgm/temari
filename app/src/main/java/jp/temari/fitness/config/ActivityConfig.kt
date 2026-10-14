@@ -29,6 +29,9 @@ object ActivityConfig {
     /** 目標の上限。 */
     const val MAX_DAILY_GOAL = 2_000
 
+    /** 呼び名の最大の文字数。ホームのあいさつが長くなりすぎないようにする。 */
+    const val NICKNAME_MAX_LENGTH = 10
+
     /** 「あと少しで目標です」と言う割合（目標の 80% 以上）。 */
     const val NEAR_GOAL_RATIO = 0.8f
 }

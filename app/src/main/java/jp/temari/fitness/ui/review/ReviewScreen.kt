@@ -1,7 +1,5 @@
 package jp.temari.fitness.ui.review
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -9,8 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -18,12 +14,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.temari.fitness.R
 import jp.temari.fitness.config.TextSizeOption
-import jp.temari.fitness.config.UiConfig
 import jp.temari.fitness.ui.common.PreviewData
 import jp.temari.fitness.ui.common.labelRes
 import jp.temari.fitness.ui.components.BigButton
 import jp.temari.fitness.ui.components.ChartBar
 import jp.temari.fitness.ui.components.ChartLegend
+import jp.temari.fitness.ui.components.ChoiceButtons
 import jp.temari.fitness.ui.components.ScreenFrame
 import jp.temari.fitness.ui.components.StackedBarChart
 import jp.temari.fitness.ui.theme.TemariTheme
@@ -72,31 +68,22 @@ fun ReviewScreen(
     }
 }
 
-/** 上部の「きょう」「今週」の切り替え。選ばれている方は塗りつぶしと「✓」で示す（色だけに頼らない）。 */
+/** 上部の「きょう」「今週」の切り替え。 */
 @Composable
 private fun ModeSwitch(selected: ReviewMode, onSelectMode: (ReviewMode) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(UiConfig.ButtonSpacing),
-    ) {
-        ReviewMode.entries.forEach { mode ->
-            val label = stringResource(
+    ChoiceButtons(
+        options = ReviewMode.entries,
+        selected = selected,
+        label = { mode ->
+            stringResource(
                 when (mode) {
                     ReviewMode.Today -> R.string.review_tab_today
                     ReviewMode.Week -> R.string.review_tab_week
                 },
             )
-            val isSelected = mode == selected
-            BigButton(
-                text = if (isSelected) stringResource(R.string.review_selected_mark, label) else label,
-                onClick = { onSelectMode(mode) },
-                primary = isSelected,
-                modifier = Modifier
-                    .weight(1f)
-                    .semantics { this.selected = isSelected },
-            )
-        }
-    }
+        },
+        onSelect = onSelectMode,
+    )
 }
 
 /** きょうの4つの時間帯の棒。 */
