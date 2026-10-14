@@ -9,7 +9,7 @@ import jp.temari.fitness.ui.bingo.BingoScreen
 import jp.temari.fitness.ui.home.HomeRoute
 import jp.temari.fitness.ui.onboarding.OnboardingScreen
 import jp.temari.fitness.ui.onboarding.OnboardingStep
-import jp.temari.fitness.ui.review.ReviewScreen
+import jp.temari.fitness.ui.review.ReviewRoute
 import jp.temari.fitness.ui.settings.SettingsScreen
 import jp.temari.fitness.ui.staff.StaffScreen
 
@@ -42,7 +42,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             )
         }
         composable(Routes.REVIEW) {
-            ReviewScreen(onBack = { navController.popBackStack() })
+            ReviewRoute(onBack = { navController.popBackStack() })
         }
         composable(Routes.BINGO) {
             BingoScreen(onBack = { navController.popBackStack() })

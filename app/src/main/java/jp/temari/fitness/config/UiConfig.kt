@@ -38,6 +38,21 @@ object UiConfig {
     /** 「ポイント」の文字を、大きな数字の下のラインに揃えて見せるための下の余白。 */
     val UnitBaselineOffset = 12.dp
 
+    /** グラフの棒の部分の高さ（いちばん高い棒がこの高さになる）。 */
+    val ChartBarAreaHeight = 220.dp
+
+    /** 棒の太さ（1本分の幅に対する割合）。 */
+    const val CHART_BAR_WIDTH_FRACTION = 0.7f
+
+    /** 「家のこと」の斜線の間隔。 */
+    val HatchSpacing = 10.dp
+
+    /** 「家のこと」の斜線の太さ。 */
+    val HatchStroke = 3.dp
+
+    /** 凡例（色と模様の見本）の四角の大きさ。 */
+    val LegendSwatchSize = 28.dp
+
     /** 「スタッフ用」を長押しと判定するまでの時間（ミリ秒）。利用者がうっかり入らないよう 2 秒にしている。 */
     const val STAFF_LONG_PRESS_MILLIS = 2_000L
 }

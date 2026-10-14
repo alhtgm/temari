@@ -40,8 +40,29 @@
     <string name="block_afternoon">午後</string>
     <string name="block_night">夜</string>
 
+    <!-- 曜日 -->
+    <string name="day_mon">月</string>
+    <string name="day_tue">火</string>
+    <string name="day_wed">水</string>
+    <string name="day_thu">木</string>
+    <string name="day_fri">金</string>
+    <string name="day_sat">土</string>
+    <string name="day_sun">日</string>
+
     <!-- ふりかえり -->
     <string name="review_title">ふりかえり</string>
+    <string name="review_tab_today">きょう</string>
+    <string name="review_tab_week">今週</string>
+    <string name="review_selected_mark">✓ %1$s</string>
+    <string name="review_legend_walk">歩いた</string>
+    <string name="review_legend_life">家のこと（しゃせん）</string>
+    <string name="review_achieved_star">★</string>
+    <string name="review_achieved_text">たっせい</string>
+    <string name="review_best_block">いちばん動いたのは %1$s でした</string>
+    <string name="review_best_day">いちばん動いたのは %1$s曜日 でした</string>
+    <string name="review_no_data">これから すこしずつ 動いていきましょう</string>
+    <string name="review_chart_description">%1$s 歩いた %2$,dポイント、家のこと %3$,dポイント</string>
+    <string name="review_chart_description_achieved">%1$s 歩いた %2$,dポイント、家のこと %3$,dポイント、目標たっせい</string>
 
     <!-- ビンゴ -->
     <string name="bingo_title">ビンゴ</string>

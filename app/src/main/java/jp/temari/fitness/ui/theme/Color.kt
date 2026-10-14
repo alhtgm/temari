@@ -31,3 +31,6 @@ val AttentionOrange = Color(0xFFA14A00)
 
 /** 気づいてほしいところの背景（うすいオレンジ）。 */
 val AttentionBackground = Color(0xFFFFF1E0)
+
+/** グラフの「家のこと」の地の色（うすい緑）。この上に濃い緑の斜線を引く。 */
+val LifeGreenLight = Color(0xFFCDE9D5)
