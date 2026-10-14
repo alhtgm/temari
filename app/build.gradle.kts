@@ -39,4 +39,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // 単体テスト（./gradlew test）でだけ使う。アプリ本体には入らない。
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
