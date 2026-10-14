@@ -53,6 +53,21 @@ object UiConfig {
     /** 凡例（色と模様の見本）の四角の大きさ。 */
     val LegendSwatchSize = 28.dp
 
+    /** ビンゴのマスの最低の高さ（文字が多いときは伸びる）。 */
+    val BingoCellMinHeight = 110.dp
+
+    /** ビンゴのそろった列に引く線の太さ。 */
+    val BingoLineWidth = 12.dp
+
+    /** ビンゴの線の不透明度。線の下のマスの文字が少し透けて読めるようにする。 */
+    const val BINGO_LINE_ALPHA = 0.75f
+
+    /** ビンゴの線が伸びていくアニメーションの時間（ミリ秒）。 */
+    const val BINGO_LINE_ANIMATION_MILLIS = 900
+
+    /** 「ビンゴ！」の文字が大きくなるアニメーションの始まりの大きさ（倍率）。 */
+    const val BINGO_TEXT_START_SCALE = 0.3f
+
     /** 「スタッフ用」を長押しと判定するまでの時間（ミリ秒）。利用者がうっかり入らないよう 2 秒にしている。 */
     const val STAFF_LONG_PRESS_MILLIS = 2_000L
 }

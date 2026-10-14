@@ -66,6 +66,33 @@
 
     <!-- ビンゴ -->
     <string name="bingo_title">ビンゴ</string>
+    <string name="bingo_week_range">今週のビンゴ（%1$d月%2$d日〜%3$d月%4$d日）</string>
+    <string name="bingo_celebration">ビンゴ！</string>
+    <string name="bingo_check_mark">✓</string>
+    <string name="bingo_cell_open_description">%1$s、あいています</string>
+    <string name="bingo_cell_closed_description">%1$s、これから</string>
+    <string name="bingo_dialog_open">✓ あきました</string>
+    <string name="bingo_button_close">とじる</string>
+
+    <!-- ビンゴのマスの名前と説明（SPEC_UI.md 3.3） -->
+    <string name="bingo_morning_active_title">朝からげんき</string>
+    <string name="bingo_morning_active_description">朝（%1$d時〜%2$d時）の活動ポイントが %3$,d 以上の日があれば あきます</string>
+    <string name="bingo_goal_once_title">目標たっせい</string>
+    <string name="bingo_goal_once_description">1日の目標を たっせいした日が 1日あれば あきます</string>
+    <string name="bingo_life_master_title">家のことマスター</string>
+    <string name="bingo_life_master_description">家のことポイントが %1$,d 以上の日があれば あきます</string>
+    <string name="bingo_night_little_title">夜もすこし</string>
+    <string name="bingo_night_little_description">夜（%1$d時〜%2$d時）に すこしでも動いた日があれば あきます</string>
+    <string name="bingo_free_title">フリー</string>
+    <string name="bingo_free_description">はじめから あいています</string>
+    <string name="bingo_walk_good_title">よく歩いた日</string>
+    <string name="bingo_walk_good_description">歩いたポイントが %1$,d 以上（約 %2$,d歩）の日があれば あきます</string>
+    <string name="bingo_record_streak_title">3日つづけて記録</string>
+    <string name="bingo_record_streak_description">記録が %1$d日 つづけて取れたら あきます</string>
+    <string name="bingo_goal_three_title">目標たっせい×3</string>
+    <string name="bingo_goal_three_description">1日の目標を たっせいした日が %1$d日 あれば あきます</string>
+    <string name="bingo_every_day_title">毎日コツコツ</string>
+    <string name="bingo_every_day_description">今週の月曜から今日まで、毎日すこしでも動いたら あきます</string>
 
     <!-- せってい -->
     <string name="settings_title">せってい</string>

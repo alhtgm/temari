@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import jp.temari.fitness.ui.bingo.BingoScreen
+import jp.temari.fitness.ui.bingo.BingoRoute
 import jp.temari.fitness.ui.home.HomeRoute
 import jp.temari.fitness.ui.onboarding.OnboardingScreen
 import jp.temari.fitness.ui.onboarding.OnboardingStep
@@ -45,7 +45,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             ReviewRoute(onBack = { navController.popBackStack() })
         }
         composable(Routes.BINGO) {
-            BingoScreen(onBack = { navController.popBackStack() })
+            BingoRoute(onBack = { navController.popBackStack() })
         }
         composable(Routes.SETTINGS) {
             SettingsScreen(
