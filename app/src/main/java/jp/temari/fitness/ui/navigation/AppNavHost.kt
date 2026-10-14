@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jp.temari.fitness.ui.bingo.BingoScreen
-import jp.temari.fitness.ui.home.HomeScreen
+import jp.temari.fitness.ui.home.HomeRoute
 import jp.temari.fitness.ui.onboarding.OnboardingScreen
 import jp.temari.fitness.ui.onboarding.OnboardingStep
 import jp.temari.fitness.ui.review.ReviewScreen
@@ -35,7 +35,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
     // 初回設定を済ませたかどうかの保存は step07 で作る。今は常にホームから始める。
     NavHost(navController = navController, startDestination = Routes.HOME) {
         composable(Routes.HOME) {
-            HomeScreen(
+            HomeRoute(
                 onOpenReview = { navController.navigate(Routes.REVIEW) },
                 onOpenBingo = { navController.navigate(Routes.BINGO) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },

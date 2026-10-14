@@ -25,3 +25,9 @@ val SurfaceGray = Color(0xFFEEF1F5)
 
 /** 目立たせたくない文字や枠線の色（背景とのコントラストは確保する）。 */
 val QuietGray = Color(0xFF555555)
+
+/** 「記録が止まっています」など、気づいてほしいところの枠の色（赤は否定的に見えるので濃いオレンジ）。 */
+val AttentionOrange = Color(0xFFA14A00)
+
+/** 気づいてほしいところの背景（うすいオレンジ）。 */
+val AttentionBackground = Color(0xFFFFF1E0)

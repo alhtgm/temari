@@ -11,6 +11,34 @@
     <string name="home_button_review">ふりかえり</string>
     <string name="home_button_bingo">ビンゴ</string>
     <string name="home_button_settings">せってい</string>
+    <string name="home_greeting_with_name">%1$sさん、%2$s</string>
+    <string name="greeting_morning">おはようございます</string>
+    <string name="greeting_day">こんにちは</string>
+    <string name="greeting_evening">こんばんは</string>
+    <string name="home_points_label">きょうの活動ポイント</string>
+    <string name="home_points_value">%1$,d</string>
+    <string name="home_points_unit">ポイント</string>
+    <string name="home_goal_value">目標 %1$,d</string>
+    <string name="home_goal_remaining">目標まで あと %1$,d</string>
+    <string name="home_goal_achieved">目標たっせい！</string>
+    <string name="home_walk_points">歩いた %1$,dポイント（約 %2$,d歩）</string>
+    <string name="home_life_points">家のこと %1$,dポイント</string>
+    <string name="home_recording">● 記録中</string>
+    <string name="home_stopped">記録が止まっています</string>
+    <string name="home_button_resume">再開する</string>
+
+    <!-- ひとことメッセージ（SPEC_UI.md 5章） -->
+    <string name="message_resume">記録を再開しましょう</string>
+    <string name="message_goal_achieved">目標たっせい！ すばらしいです</string>
+    <string name="message_near_goal">あと少しで目標です</string>
+    <string name="message_best_block">%1$sによく動けましたね</string>
+    <string name="message_keep_going">すこしずつ動いていきましょう</string>
+
+    <!-- 時間帯の名前 -->
+    <string name="block_morning">朝</string>
+    <string name="block_noon">昼</string>
+    <string name="block_afternoon">午後</string>
+    <string name="block_night">夜</string>
 
     <!-- ふりかえり -->
     <string name="review_title">ふりかえり</string>
