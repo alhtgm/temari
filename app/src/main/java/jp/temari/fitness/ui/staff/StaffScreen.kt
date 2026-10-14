@@ -2,9 +2,11 @@ package jp.temari.fitness.ui.staff
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -38,7 +40,9 @@ fun StaffRoute(
     StaffScreen(
         state = state,
         onScenarioSelect = viewModel::onScenarioSelect,
-        onRestartOnboarding = onRestartOnboarding,
+        onRestartClick = viewModel::onRestartClick,
+        onRestartCancel = viewModel::onRestartCancel,
+        onRestartConfirm = { viewModel.onRestartConfirm(onRestartOnboarding) },
         onBack = onBack,
     )
 }
@@ -54,9 +58,14 @@ fun StaffRoute(
 fun StaffScreen(
     state: StaffUiState?,
     onScenarioSelect: (MockScenario) -> Unit,
-    onRestartOnboarding: () -> Unit,
+    onRestartClick: () -> Unit,
+    onRestartCancel: () -> Unit,
+    onRestartConfirm: () -> Unit,
     onBack: () -> Unit,
 ) {
+    if (state?.showRestartDialog == true) {
+        RestartDialog(onConfirm = onRestartConfirm, onCancel = onRestartCancel)
+    }
     ScreenFrame(
         title = stringResource(R.string.staff_title),
         bottomBar = {
@@ -81,7 +90,7 @@ fun StaffScreen(
             )
             BigButton(
                 text = stringResource(R.string.staff_button_restart_onboarding),
-                onClick = onRestartOnboarding,
+                onClick = onRestartClick,
                 primary = false,
             )
             HorizontalDivider()
@@ -97,6 +106,30 @@ fun StaffScreen(
             }
         }
     }
+}
+
+/** 「初回設定をやり直しますか？」の確認。消える内容を書いておき、うっかり押しても戻れるようにする。 */
+@Composable
+private fun RestartDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onCancel,
+        title = {
+            Text(stringResource(R.string.staff_restart_dialog_title), style = MaterialTheme.typography.titleLarge)
+        },
+        text = {
+            Text(stringResource(R.string.staff_restart_dialog_text), style = MaterialTheme.typography.bodyLarge)
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.staff_restart_dialog_confirm), style = MaterialTheme.typography.titleLarge)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onCancel) {
+                Text(stringResource(R.string.staff_restart_dialog_cancel), style = MaterialTheme.typography.titleLarge)
+            }
+        },
+    )
 }
 
 @Composable
@@ -129,7 +162,9 @@ private fun StaffScreenPreview(
         StaffScreen(
             state = StaffUiState(MockScenario.Normal, userId = "123e4567-e89b-12d3-a456-426614174000"),
             onScenarioSelect = {},
-            onRestartOnboarding = {},
+            onRestartClick = {},
+            onRestartCancel = {},
+            onRestartConfirm = {},
             onBack = {},
         )
     }

@@ -112,6 +112,10 @@
     <!-- スタッフ・開発用 -->
     <string name="staff_title">スタッフ・開発用</string>
     <string name="staff_button_restart_onboarding">初回設定のやり直し</string>
+    <string name="staff_restart_dialog_title">初回設定をやり直しますか？</string>
+    <string name="staff_restart_dialog_text">よび名・目標・文字の大きさ・利用者IDが消え、初回設定の最初の画面にもどります。</string>
+    <string name="staff_restart_dialog_confirm">やり直す</string>
+    <string name="staff_restart_dialog_cancel">やめる</string>
     <string name="staff_section_scenario">モックデータのシナリオ</string>
     <string name="scenario_normal">ふつうの日</string>
     <string name="scenario_active">よく動いた日</string>
@@ -135,4 +139,17 @@
     <string name="onboarding_goal_title">1日の目標</string>
     <string name="onboarding_done_title">じゅんびができました</string>
     <string name="onboarding_button_start">はじめましょう</string>
+    <string name="onboarding_button_later">あとで</string>
+    <string name="onboarding_welcome_line1">このアプリは、1日に どれだけ動いたかを 自動で記録します。</string>
+    <string name="onboarding_welcome_line2">あなたは 開いて 見るだけです。</string>
+    <string name="onboarding_welcome_line3">はじめに、いくつか 設定をします。</string>
+    <string name="onboarding_name_text">アプリの中で よぶ名前を 入れてください。</string>
+    <string name="onboarding_notification_text">記録していることを、お知らせで 表示します。つぎの画面で「許可」を えらんでください。</string>
+    <string name="onboarding_notification_granted">✓ お知らせは 許可されています</string>
+    <string name="onboarding_battery_text">電池の節約のために 記録が止まらないよう、このアプリを「電池の最適化」から外します。</string>
+    <string name="onboarding_battery_button">電池の設定を ひらく</string>
+    <string name="onboarding_battery_done">✓ 電池の設定は できています</string>
+    <string name="onboarding_goal_text">1日の目標を きめます。あとから せってい で変えられます。</string>
+    <string name="onboarding_goal_recommended">おすすめは %1$,d ポイントです</string>
+    <string name="onboarding_done_text">これで 設定は おわりです。</string>
 </resources>
