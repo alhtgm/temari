@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">てまりフィットネス</string>
+
+    <!-- 共通のボタン -->
+    <string name="button_back">もどる</string>
+    <string name="button_next">つぎへ</string>
+
+    <!-- ホーム -->
+    <string name="home_title">ホーム</string>
+    <string name="home_button_review">ふりかえり</string>
+    <string name="home_button_bingo">ビンゴ</string>
+    <string name="home_button_settings">せってい</string>
+
+    <!-- ふりかえり -->
+    <string name="review_title">ふりかえり</string>
+
+    <!-- ビンゴ -->
+    <string name="bingo_title">ビンゴ</string>
+
+    <!-- せってい -->
+    <string name="settings_title">せってい</string>
+    <string name="settings_staff_entry">スタッフ用</string>
+
+    <!-- スタッフ・開発用 -->
+    <string name="staff_title">スタッフ・開発用</string>
+    <string name="staff_button_restart_onboarding">初回設定のやり直し</string>
+
+    <!-- 初回設定 -->
+    <string name="onboarding_welcome_title">ようこそ</string>
+    <string name="onboarding_name_title">よび名</string>
+    <string name="onboarding_notification_title">お知らせの許可</string>
+    <string name="onboarding_battery_title">電池の設定</string>
+    <string name="onboarding_goal_title">1日の目標</string>
+    <string name="onboarding_done_title">じゅんびができました</string>
+    <string name="onboarding_button_start">はじめましょう</string>
+</resources>

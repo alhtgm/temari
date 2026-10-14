@@ -1,0 +1,12 @@
+# Gradle / Android Studio が作るファイル
+.gradle/
+build/
+/app/build/
+.idea/
+*.iml
+.kotlin/
+captures/
+.externalNativeBuild/
+.cxx/
+# PC ごとの設定（SDK の場所など）。コミットしない。
+local.properties
