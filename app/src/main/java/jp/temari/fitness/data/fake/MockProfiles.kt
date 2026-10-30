@@ -30,6 +30,9 @@ internal data class DayShape(
  * @property pastRatios 月曜から順に、その日の合計の目標に対する割合。null は「記録なし」。今日以降の分は使わない。
  * @property pastShape 過去の日の時間帯ごとの割合。
  * @property stopHour 記録が止まった時刻（時）。null なら記録中。
+ * @property stepsBeforeWeek 今週より前に歩いた歩数の合計（「たび」の距離に使う）。
+ * @property streakBeforeWeek 今週の月曜より前に、続けて記録できていた日数。
+ * @property exercisesToday 今日すでにした「たいそう」の回数。
  */
 internal data class ScenarioProfile(
     val todayRatio: Float,
@@ -38,6 +41,9 @@ internal data class ScenarioProfile(
     val pastRatios: List<Float?>,
     val pastShape: DayShape,
     val stopHour: Int? = null,
+    val stepsBeforeWeek: Int = 0,
+    val streakBeforeWeek: Int = 0,
+    val exercisesToday: Int = 0,
 )
 
 /**
@@ -65,6 +71,9 @@ internal object MockProfiles {
         walkShare = 0.65f,
         pastRatios = listOf(0.9f, 1.05f, null, 0.8f, 0.6f, 0.9f),
         pastShape = Even,
+        stepsBeforeWeek = 48_000,
+        streakBeforeWeek = 5,
+        exercisesToday = 1,
     )
 
     private val Active = ScenarioProfile(
@@ -73,6 +82,9 @@ internal object MockProfiles {
         walkShare = 0.55f,
         pastRatios = listOf(1.1f, 1.3f, 1.0f, 1.2f, 0.9f, 1.15f),
         pastShape = Busy,
+        stepsBeforeWeek = 165_000,
+        streakBeforeWeek = 12,
+        exercisesToday = 3,
     )
 
     private val Low = ScenarioProfile(
@@ -81,6 +93,7 @@ internal object MockProfiles {
         walkShare = 0.6f,
         pastRatios = listOf(0.3f, null, 0.5f, 0.2f, 0.4f, 0.3f),
         pastShape = Even,
+        stepsBeforeWeek = 12_000,
     )
 
     // 記録が止まった日: ふつうの日と同じ形で、昼（10時）から止まっている。

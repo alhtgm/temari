@@ -8,7 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jp.temari.fitness.ui.bingo.BingoRoute
+import jp.temari.fitness.ui.exercise.ExerciseRoute
 import jp.temari.fitness.ui.home.HomeRoute
+import jp.temari.fitness.ui.journey.JourneyRoute
 import jp.temari.fitness.ui.onboarding.OnboardingRoute
 import jp.temari.fitness.ui.onboarding.OnboardingStep
 import jp.temari.fitness.ui.review.ReviewRoute
@@ -20,6 +22,8 @@ object Routes {
     const val HOME = "home"
     const val REVIEW = "review"
     const val BINGO = "bingo"
+    const val JOURNEY = "journey"
+    const val EXERCISE = "exercise"
     const val SETTINGS = "settings"
     const val STAFF = "staff"
 
@@ -44,6 +48,8 @@ fun AppNavHost(
             HomeRoute(
                 onOpenReview = { entry.ifResumed { navController.navigate(Routes.REVIEW) } },
                 onOpenBingo = { entry.ifResumed { navController.navigate(Routes.BINGO) } },
+                onOpenJourney = { entry.ifResumed { navController.navigate(Routes.JOURNEY) } },
+                onOpenExercise = { entry.ifResumed { navController.navigate(Routes.EXERCISE) } },
                 onOpenSettings = { entry.ifResumed { navController.navigate(Routes.SETTINGS) } },
             )
         }
@@ -52,6 +58,12 @@ fun AppNavHost(
         }
         composable(Routes.BINGO) { entry ->
             BingoRoute(onBack = { entry.ifResumed { navController.popBackStack() } })
+        }
+        composable(Routes.JOURNEY) { entry ->
+            JourneyRoute(onBack = { entry.ifResumed { navController.popBackStack() } })
+        }
+        composable(Routes.EXERCISE) { entry ->
+            ExerciseRoute(onBack = { entry.ifResumed { navController.popBackStack() } })
         }
         composable(Routes.SETTINGS) { entry ->
             SettingsRoute(

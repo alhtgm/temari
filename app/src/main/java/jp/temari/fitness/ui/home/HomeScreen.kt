@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,6 +35,7 @@ import jp.temari.fitness.R
 import jp.temari.fitness.config.ActivityConfig
 import jp.temari.fitness.config.TextSizeOption
 import jp.temari.fitness.config.UiConfig
+import jp.temari.fitness.data.ActivitySummary
 import jp.temari.fitness.data.DailyActivity
 import jp.temari.fitness.data.RecordingStatus
 import jp.temari.fitness.data.fake.MockScenario
@@ -48,6 +50,8 @@ import jp.temari.fitness.ui.components.ProgressRing
 import jp.temari.fitness.ui.components.PulsingDot
 import jp.temari.fitness.ui.components.ScreenFrame
 import jp.temari.fitness.ui.components.TemariCard
+import jp.temari.fitness.ui.review.ReviewUiState
+import jp.temari.fitness.ui.review.WeekDay
 import jp.temari.fitness.ui.components.rememberCountUp
 import jp.temari.fitness.ui.theme.AttentionBackground
 import jp.temari.fitness.ui.theme.AttentionOrange
@@ -59,6 +63,7 @@ import jp.temari.fitness.ui.theme.TemariGreen
 import jp.temari.fitness.ui.theme.TemariGreenLight
 import jp.temari.fitness.ui.theme.TemariTheme
 import jp.temari.fitness.ui.theme.TemariVermilion
+import jp.temari.fitness.ui.theme.TemariVermilionLight
 import jp.temari.fitness.ui.theme.TemariYellow
 import jp.temari.fitness.ui.theme.TextSizePreviewProvider
 import kotlinx.coroutines.flow.first
@@ -74,6 +79,8 @@ import java.time.LocalDateTime
 fun HomeRoute(
     onOpenReview: () -> Unit,
     onOpenBingo: () -> Unit,
+    onOpenJourney: () -> Unit,
+    onOpenExercise: () -> Unit,
     onOpenSettings: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
 ) {
@@ -81,11 +88,20 @@ fun HomeRoute(
     HomeScreen(
         state = state,
         onResumeRecording = viewModel::onResumeRecording,
-        onOpenReview = onOpenReview,
-        onOpenBingo = onOpenBingo,
+        menu = HomeMenuActions(onOpenReview, onOpenBingo, onOpenJourney, onOpenExercise),
         onOpenSettings = onOpenSettings,
     )
 }
+
+/**
+ * ホームのメニューのタイルを押したときの行き先。
+ */
+data class HomeMenuActions(
+    val onOpenReview: () -> Unit,
+    val onOpenBingo: () -> Unit,
+    val onOpenJourney: () -> Unit,
+    val onOpenExercise: () -> Unit,
+)
 
 /**
  * ホーム画面（表示だけ）。アプリの中心で、ここから各画面へ1段だけ進む。
@@ -96,8 +112,7 @@ fun HomeRoute(
 fun HomeScreen(
     state: HomeUiState?,
     onResumeRecording: () -> Unit,
-    onOpenReview: () -> Unit,
-    onOpenBingo: () -> Unit,
+    menu: HomeMenuActions,
     onOpenSettings: () -> Unit,
 ) {
     ScreenFrame(
@@ -119,7 +134,10 @@ fun HomeScreen(
             Breakdown(state.today)
             RecordingStatusView(state.status, onResumeRecording)
         }
-        MenuGrid(onOpenReview = onOpenReview, onOpenBingo = onOpenBingo)
+        MenuGrid(menu)
+        if (state != null) {
+            WeekCard(state.weekDays, state.today, state.summary)
+        }
     }
 }
 
@@ -368,29 +386,125 @@ private fun RecordingStatusView(status: RecordingStatus, onResumeRecording: () -
     }
 }
 
-/** ほかの画面へ進む大きなタイル。 */
+/** ほかの画面へ進む大きなタイル（2×2）。 */
 @Composable
-private fun MenuGrid(onOpenReview: () -> Unit, onOpenBingo: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(UiConfig.ButtonSpacing),
+private fun MenuGrid(menu: HomeMenuActions) {
+    Column(verticalArrangement = Arrangement.spacedBy(UiConfig.ButtonSpacing)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(UiConfig.ButtonSpacing)) {
+            MenuTile(
+                emoji = stringResource(R.string.emoji_review),
+                text = stringResource(R.string.home_button_review),
+                color = TemariBlue,
+                contentColor = Color.White,
+                onClick = menu.onOpenReview,
+                modifier = Modifier.weight(1f),
+            )
+            MenuTile(
+                emoji = stringResource(R.string.emoji_bingo),
+                text = stringResource(R.string.home_button_bingo),
+                color = TemariVermilion,
+                contentColor = Color.White,
+                onClick = menu.onOpenBingo,
+                modifier = Modifier.weight(1f),
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(UiConfig.ButtonSpacing)) {
+            MenuTile(
+                emoji = stringResource(R.string.emoji_journey),
+                text = stringResource(R.string.home_button_journey),
+                color = TemariGreen,
+                contentColor = Color.White,
+                onClick = menu.onOpenJourney,
+                modifier = Modifier.weight(1f),
+            )
+            MenuTile(
+                emoji = stringResource(R.string.emoji_exercise),
+                text = stringResource(R.string.home_button_exercise),
+                color = HeroGradientEnd,
+                contentColor = Color.White,
+                onClick = menu.onOpenExercise,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+/**
+ * 「今週のようす」: つづけて記録した日数・体操の回数と、月〜日の印。
+ *
+ * 印は ★（たっせい）・●（動いた）・○（記録なし）で、色だけでなく形でも分かるようにする。
+ */
+@Composable
+private fun WeekCard(weekDays: List<WeekDay>, today: DailyActivity, summary: ActivitySummary) {
+    TemariCard(
+        title = stringResource(R.string.home_week_title),
+        emoji = stringResource(R.string.emoji_week),
     ) {
-        MenuTile(
-            emoji = stringResource(R.string.emoji_review),
-            text = stringResource(R.string.home_button_review),
-            color = TemariBlue,
-            contentColor = Color.White,
-            onClick = onOpenReview,
-            modifier = Modifier.weight(1f),
+        Chip(
+            text = stringResource(R.string.emoji_streak) + " " + stringResource(R.string.home_streak, summary.streakDays),
+            color = TemariVermilionLight,
         )
-        MenuTile(
-            emoji = stringResource(R.string.emoji_bingo),
-            text = stringResource(R.string.home_button_bingo),
-            color = TemariVermilion,
-            contentColor = Color.White,
-            onClick = onOpenBingo,
-            modifier = Modifier.weight(1f),
+        Chip(
+            text = stringResource(R.string.emoji_exercise) + " " +
+                stringResource(R.string.home_exercise_count, summary.exercisesToday),
+            color = TemariGreenLight,
         )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            weekDays.forEach { day ->
+                WeekDayMark(day, isToday = day.date == today.date, isFuture = day.date.isAfter(today.date))
+            }
+        }
+        Text(
+            text = stringResource(R.string.home_week_legend),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.outline,
+        )
+    }
+}
+
+/** 角の丸い横長の札。特大の文字でも切れないよう、横に2つ並べず1つずつ置く。 */
+@Composable
+private fun Chip(text: String, color: Color) {
+    Surface(modifier = Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, color = color) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(UiConfig.SmallSpacing),
+        )
+    }
+}
+
+/** 1日分の印（曜日と ★●○）。今日は枠で囲む。 */
+@Composable
+private fun RowScope.WeekDayMark(day: WeekDay, isToday: Boolean, isFuture: Boolean) {
+    val dayLabel = stringResource(day.date.dayOfWeek.labelRes)
+    val activity = day.activity
+    val outline = MaterialTheme.colorScheme.outline
+    val (mark, descriptionRes, color) = when {
+        isFuture -> Triple(R.string.home_week_mark_future, R.string.home_week_day_future, outline)
+        activity == null || activity.totalPoints <= 0 ->
+            Triple(R.string.home_week_mark_none, R.string.home_week_day_none, outline)
+        activity.isGoalAchieved ->
+            Triple(R.string.home_week_mark_achieved, R.string.home_week_day_achieved, TemariVermilion)
+        else -> Triple(R.string.home_week_mark_active, R.string.home_week_day_active, TemariBlue)
+    }
+    val description = stringResource(descriptionRes, dayLabel)
+    val shape = MaterialTheme.shapes.small
+    val todayBorder = if (isToday) {
+        Modifier.border(UiConfig.BorderWidth, MaterialTheme.colorScheme.primary, shape)
+    } else {
+        Modifier
+    }
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .then(todayBorder)
+            .padding(vertical = UiConfig.SmallSpacing / 2)
+            .clearAndSetSemantics { contentDescription = description },
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(text = dayLabel, style = MaterialTheme.typography.bodySmall)
+        Text(text = stringResource(mark), style = MaterialTheme.typography.titleLarge, color = color)
     }
 }
 
@@ -406,6 +520,8 @@ private fun previewState(scenario: MockScenario): HomeUiState = runBlocking {
         today = today,
         status = status,
         message = HomeMessage.select(today, status, now),
+        weekDays = ReviewUiState.weekDaysOf(today.date, repository.weekActivities().first()),
+        summary = repository.summary().first(),
     )
 }
 
@@ -418,8 +534,7 @@ private fun HomeScreenPreview(
         HomeScreen(
             state = previewState(MockScenario.Normal),
             onResumeRecording = {},
-            onOpenReview = {},
-            onOpenBingo = {},
+            menu = HomeMenuActions({}, {}, {}, {}),
             onOpenSettings = {},
         )
     }
@@ -434,8 +549,7 @@ private fun HomeScreenStoppedPreview(
         HomeScreen(
             state = previewState(MockScenario.Stopped),
             onResumeRecording = {},
-            onOpenReview = {},
-            onOpenBingo = {},
+            menu = HomeMenuActions({}, {}, {}, {}),
             onOpenSettings = {},
         )
     }

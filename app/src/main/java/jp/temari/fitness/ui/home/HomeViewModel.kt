@@ -7,9 +7,12 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import jp.temari.fitness.TemariApplication
 import jp.temari.fitness.data.ActivityRepository
+import jp.temari.fitness.data.ActivitySummary
 import jp.temari.fitness.data.DailyActivity
 import jp.temari.fitness.data.RecordingStatus
 import jp.temari.fitness.ui.common.nowTicker
+import jp.temari.fitness.ui.review.ReviewUiState
+import jp.temari.fitness.ui.review.WeekDay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +28,8 @@ import java.time.Clock
  * @property today 今日の活動。
  * @property status 記録の状態。
  * @property message ひとことメッセージ。
+ * @property weekDays 今週の月〜日（「今週のようす」に使う）。
+ * @property summary つづけて記録した日数・今日の体操の回数など。
  */
 data class HomeUiState(
     val nickname: String,
@@ -32,6 +37,8 @@ data class HomeUiState(
     val today: DailyActivity,
     val status: RecordingStatus,
     val message: HomeMessage,
+    val weekDays: List<WeekDay>,
+    val summary: ActivitySummary,
 )
 
 /**
@@ -49,13 +56,18 @@ class HomeViewModel(
         repository.recordingStatus(),
         nickname,
         nowTicker(clock),
-    ) { today, status, name, now ->
+        // combine は 5 つまでしか型をそろえて受け取れないので、週と まとめ は先に1つにする。
+        combine(repository.weekActivities(), repository.summary(), ::Pair),
+    ) { today, status, name, now, weekAndSummary ->
+        val (week, summary) = weekAndSummary
         HomeUiState(
             nickname = name,
             greeting = Greeting.of(now.toLocalTime()),
             today = today,
             status = status,
             message = HomeMessage.select(today, status, now.toLocalTime()),
+            weekDays = ReviewUiState.weekDaysOf(today.date, week),
+            summary = summary,
         )
     }.stateIn(
         scope = viewModelScope,

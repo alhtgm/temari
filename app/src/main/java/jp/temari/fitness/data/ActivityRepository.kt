@@ -23,6 +23,12 @@ interface ActivityRepository {
     /** 今週のビンゴカード。 */
     fun bingoCard(): Flow<BingoCard>
 
+    /** 日をまたいだまとめ（これまでの歩数・つづけて記録した日数・今日の体操の回数）。 */
+    fun summary(): Flow<ActivitySummary>
+
     /** 止まっている記録を再開する。 */
     suspend fun resumeRecording()
+
+    /** 「たいそう」を1回終えたことを記録する。 */
+    suspend fun recordExercise()
 }

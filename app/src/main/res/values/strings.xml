@@ -13,6 +13,11 @@
     <string name="emoji_text_size">🔤</string>
     <string name="emoji_nickname">😊</string>
     <string name="emoji_goal">🎯</string>
+    <string name="emoji_journey">🗾</string>
+    <string name="emoji_exercise">🤸</string>
+    <string name="emoji_station">🏯</string>
+    <string name="emoji_streak">🔥</string>
+    <string name="emoji_week">📅</string>
 
     <!-- 共通のボタン -->
     <string name="button_back">もどる</string>
@@ -44,6 +49,20 @@
     <string name="home_points_short">%1$,d ポイント</string>
     <string name="home_steps_about">約 %1$,d歩</string>
     <string name="home_recording_text">記録中</string>
+    <string name="home_button_journey">たび</string>
+    <string name="home_button_exercise">たいそう</string>
+    <string name="home_week_title">今週の ようす</string>
+    <string name="home_streak">つづけて記録 %1$d日</string>
+    <string name="home_exercise_count">たいそう %1$d回</string>
+    <string name="home_week_mark_achieved">★</string>
+    <string name="home_week_mark_active">●</string>
+    <string name="home_week_mark_none">○</string>
+    <string name="home_week_mark_future">・</string>
+    <string name="home_week_legend">★ たっせい　● 動いた　○ 記録なし</string>
+    <string name="home_week_day_achieved">%1$s曜日、目標たっせい</string>
+    <string name="home_week_day_active">%1$s曜日、動いた</string>
+    <string name="home_week_day_none">%1$s曜日、記録なし</string>
+    <string name="home_week_day_future">%1$s曜日、これから</string>
     <string name="home_stopped">記録が止まっています</string>
     <string name="home_button_resume">再開する</string>
 
@@ -123,6 +142,66 @@
     <string name="bingo_goal_three_description">1日の目標を たっせいした日が %1$d日 あれば あきます</string>
     <string name="bingo_every_day_title">毎日コツコツ</string>
     <string name="bingo_every_day_description">今週の月曜から今日まで、毎日すこしでも動いたら あきます</string>
+
+    <!-- たび -->
+    <string name="journey_title">たび</string>
+    <string name="journey_subtitle">歩いた きょりで 東海道を たびしています</string>
+    <string name="journey_distance">%1$s km</string>
+    <string name="journey_total_steps">これまで %1$,d歩</string>
+    <string name="journey_lap">京都に とうちゃく！ いまは %1$d周目</string>
+    <string name="journey_route_percent">京都まで %1$d%%</string>
+    <string name="journey_next">つぎは %1$s</string>
+    <string name="journey_next_km">あと %1$s km（約 %2$,d歩）</string>
+    <string name="journey_list_title">宿場の いちらん</string>
+    <string name="journey_here">👟 いま ここ</string>
+    <string name="journey_passed_mark">✓</string>
+    <string name="journey_upcoming_mark">○</string>
+    <string name="journey_station_km">%1$s km</string>
+    <string-array name="journey_stations">
+        <item>日本橋</item>
+        <item>品川</item>
+        <item>川崎</item>
+        <item>神奈川（横浜）</item>
+        <item>藤沢</item>
+        <item>小田原</item>
+        <item>箱根</item>
+        <item>三島</item>
+        <item>府中（静岡）</item>
+        <item>浜松</item>
+        <item>岡崎</item>
+        <item>宮（名古屋）</item>
+        <item>桑名</item>
+        <item>草津</item>
+        <item>京都 三条大橋</item>
+    </string-array>
+
+    <!-- たいそう（内容は仮。施設の専門職に確認してもらう） -->
+    <string name="exercise_title">たいそう</string>
+    <string name="exercise_today_count">きょうの たいそう %1$d回</string>
+    <string name="exercise_safety">いすに すわって できます。むりを せず、いたいときは 休みましょう。</string>
+    <string name="exercise_button_start">はじめる（%1$d秒）</string>
+    <string name="exercise_button_stop">おわる</string>
+    <string name="exercise_button_more">ほかの たいそうへ</string>
+    <string name="exercise_ready">よーい…</string>
+    <string name="exercise_go">いっしょに やりましょう！</string>
+    <string name="exercise_seconds_left">%1$d</string>
+    <string name="exercise_done">よくできました！</string>
+    <string name="exercise_done_detail">%1$s が おわりました</string>
+    <string name="exercise_march_emoji">🦵</string>
+    <string name="exercise_march_title">足ぶみ</string>
+    <string name="exercise_march_howto">すわったまま、ももを 左右 こうごに 上げましょう。</string>
+    <string name="exercise_heel_emoji">👣</string>
+    <string name="exercise_heel_title">かかと上げ</string>
+    <string name="exercise_heel_howto">つま先を ゆかに つけたまま、かかとを ゆっくり 上げて 下ろしましょう。</string>
+    <string name="exercise_shoulder_emoji">🔄</string>
+    <string name="exercise_shoulder_title">肩まわし</string>
+    <string name="exercise_shoulder_howto">肩に 手を のせて、ひじで 大きな 円を かきましょう。</string>
+    <string name="exercise_arms_emoji">🙌</string>
+    <string name="exercise_arms_title">ばんざい</string>
+    <string name="exercise_arms_howto">両手を ゆっくり 上に のばして、ゆっくり 下ろしましょう。</string>
+    <string name="exercise_breath_emoji">🌬️</string>
+    <string name="exercise_breath_title">深呼吸</string>
+    <string name="exercise_breath_howto">鼻から ゆっくり 吸って、口から ゆっくり はきましょう。</string>
 
     <!-- せってい -->
     <string name="settings_title">せってい</string>

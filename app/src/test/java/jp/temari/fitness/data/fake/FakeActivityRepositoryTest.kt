@@ -144,4 +144,29 @@ class FakeActivityRepositoryTest {
         assertEquals(MockScenario.Active, repo.scenario.value)
         assertTrue(repo.todayActivity().first().isGoalAchieved)
     }
+
+    @Test
+    fun summary_streakAndStepsFollowScenario() = runTest {
+        // ふつうの日: 水曜は記録なしなので、木曜（今日）だけが続いている。
+        val normal = repository(MockScenario.Normal).summary().first()
+        assertEquals(1, normal.streakDays)
+        assertTrue(normal.totalSteps > 48_000)
+
+        // よく動いた日: 月曜から毎日記録があり、先週以前の 12 日も続いている（4 + 12）。
+        val active = repository(MockScenario.Active).summary().first()
+        assertEquals(16, active.streakDays)
+
+        // はじめての日: 今日だけ。
+        assertEquals(1, repository(MockScenario.FirstDay).summary().first().streakDays)
+    }
+
+    @Test
+    fun recordExercise_addsOneAndResetsOnScenarioChange() = runTest {
+        val repo = repository(MockScenario.Normal)
+        val before = repo.summary().first().exercisesToday
+        repo.recordExercise()
+        assertEquals(before + 1, repo.summary().first().exercisesToday)
+        repo.setScenario(MockScenario.Normal)
+        assertEquals(before, repo.summary().first().exercisesToday)
+    }
 }

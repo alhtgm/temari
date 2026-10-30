@@ -62,3 +62,16 @@ sealed interface RecordingStatus {
      */
     data class Stopped(val since: LocalDateTime) : RecordingStatus
 }
+
+/**
+ * ホームなどに出す、日をまたいだまとめの数字。
+ *
+ * @property totalSteps 使いはじめてからの歩数の合計（「たび」の距離に使う）。
+ * @property streakDays 今日（今日がまだなら昨日）まで、記録が続いている日数。
+ * @property exercisesToday 今日「たいそう」をした回数。
+ */
+data class ActivitySummary(
+    val totalSteps: Int,
+    val streakDays: Int,
+    val exercisesToday: Int,
+)

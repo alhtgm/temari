@@ -2,6 +2,8 @@ package jp.temari.fitness.data.fake
 
 import jp.temari.fitness.config.ActivityConfig
 import jp.temari.fitness.data.ActivityRepository
+import jp.temari.fitness.data.ActivityStats
+import jp.temari.fitness.data.ActivitySummary
 import jp.temari.fitness.data.BingoCard
 import jp.temari.fitness.data.BingoRules
 import jp.temari.fitness.data.DailyActivity
@@ -36,12 +38,16 @@ class FakeActivityRepository(
         val today: DailyActivity,
         val week: List<DailyActivity>,
         val status: RecordingStatus,
+        val profile: ScenarioProfile,
     )
 
     private val currentScenario = MutableStateFlow(MockScenario.Normal)
 
     /** 「再開する」を押したかどうか。 */
     private val resumed = MutableStateFlow(false)
+
+    /** 「たいそう」を画面で終えた回数（シナリオの初期値に足す）。 */
+    private val addedExercises = MutableStateFlow(0)
 
     override val scenario: StateFlow<MockScenario> = currentScenario.asStateFlow()
 
@@ -58,14 +64,41 @@ class FakeActivityRepository(
     override fun bingoCard(): Flow<BingoCard> =
         snapshot.map { BingoRules.buildCard(it.today.date, it.week) }
 
+    override fun summary(): Flow<ActivitySummary> =
+        combine(snapshot, addedExercises) { snap, added -> buildSummary(snap, added) }
+
     override suspend fun resumeRecording() {
         resumed.value = true
     }
 
+    override suspend fun recordExercise() {
+        addedExercises.value += 1
+    }
+
     override fun setScenario(scenario: MockScenario) {
-        // シナリオを替えたら「再開した」状態も元に戻す。
+        // シナリオを替えたら「再開した」状態と体操の回数も元に戻す。
         resumed.value = false
+        addedExercises.value = 0
         currentScenario.value = scenario
+    }
+
+    private fun buildSummary(snap: Snapshot, addedExercises: Int): ActivitySummary {
+        val today = snap.today.date
+        val weekStart = BingoRules.weekStartOf(today)
+        val recorded = snap.week.filter { it.totalPoints > 0 }.map { it.date }.toMutableSet()
+        // 月曜から（今日か昨日まで）毎日記録があれば、先週以前から続いている日数ぶんの日付も足す。
+        val lastDay = if (today in recorded) today else today.minusDays(1)
+        val weekAllRecorded = generateSequence(weekStart) { it.plusDays(1) }
+            .takeWhile { !it.isAfter(lastDay) }
+            .all { it in recorded }
+        if (weekAllRecorded) {
+            (1..snap.profile.streakBeforeWeek).forEach { recorded += weekStart.minusDays(it.toLong()) }
+        }
+        return ActivitySummary(
+            totalSteps = snap.profile.stepsBeforeWeek + snap.week.sumOf { it.steps },
+            streakDays = ActivityStats.currentStreak(today, recorded),
+            exercisesToday = snap.profile.exercisesToday + addedExercises,
+        )
     }
 
     private fun buildSnapshot(scenario: MockScenario, isResumed: Boolean, goal: Int): Snapshot {
@@ -120,7 +153,7 @@ class FakeActivityRepository(
         } else {
             RecordingStatus.Recording
         }
-        return Snapshot(todayActivity, pastDays + todayActivity, status)
+        return Snapshot(todayActivity, pastDays + todayActivity, status, profile)
     }
 
     /**
