@@ -14,11 +14,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import jp.temari.fitness.config.TextSizeOption
 import jp.temari.fitness.ui.navigation.AppNavHost
 import jp.temari.fitness.ui.navigation.Routes
 import jp.temari.fitness.ui.onboarding.OnboardingStep
 import jp.temari.fitness.ui.theme.TemariTheme
+import kotlinx.coroutines.launch
 
 /**
  * アプリの入口となる画面（Activity）。
@@ -55,5 +57,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // アプリを開くたびに、記録が止まっていれば始め直す（許可があり、初回設定が済んでいるときだけ）。
+        val controller = (application as TemariApplication).container.recordingController
+        lifecycleScope.launch { controller.startIfReady() }
     }
 }

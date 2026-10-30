@@ -219,7 +219,7 @@
     <string name="staff_title">スタッフ・開発用</string>
     <string name="staff_button_restart_onboarding">初回設定のやり直し</string>
     <string name="staff_restart_dialog_title">初回設定をやり直しますか？</string>
-    <string name="staff_restart_dialog_text">よび名・目標・文字の大きさ・利用者IDが消え、初回設定の最初の画面にもどります。</string>
+    <string name="staff_restart_dialog_text">よび名・目標・文字の大きさ・利用者IDが消え、記録も止まり、初回設定の最初の画面にもどります。（これまでの記録は残ります）</string>
     <string name="staff_restart_dialog_confirm">やり直す</string>
     <string name="staff_restart_dialog_cancel">やめる</string>
     <string name="staff_section_scenario">モックデータのシナリオ</string>
@@ -233,14 +233,39 @@
     <string name="staff_user_id_none">利用者ID: まだ発行されていません</string>
     <string name="staff_section_later">あとの段階で作るもの</string>
     <string name="staff_preparing">%1$s: 準備中</string>
-    <string name="staff_recording_status">記録の状態</string>
-    <string name="staff_sensor_info">センサー情報</string>
     <string name="staff_data_export">データ書き出し</string>
+    <string name="staff_section_data_source">データの出どころ</string>
+    <string name="data_source_sensor">本物の計測</string>
+    <string name="data_source_mock">モック</string>
+    <string name="staff_scenario_note">「モック」のときだけ画面に出ます。</string>
+    <string name="staff_section_sensor">記録の状態・センサー情報</string>
+    <string name="staff_button_start_recording">記録を始める</string>
+    <string name="staff_yes">あり</string>
+    <string name="staff_no">なし</string>
+    <string name="staff_unknown">まだ分かりません</string>
+    <string name="staff_running">記録中</string>
+    <string name="staff_not_running">止まっています</string>
+    <string name="staff_recording_status_value">記録の状態: %1$s</string>
+    <string name="staff_permission_value">身体活動の許可: %1$s</string>
+    <string name="staff_step_counter_value">歩数計センサー: %1$s</string>
+    <string name="staff_step_counter_fallback">なし（加速度から数えています）</string>
+    <string name="staff_last_recorded_value">最後に記録: %1$s</string>
+    <string name="staff_today_steps_value">今日の歩数（本物）: %1$,d歩</string>
+    <string name="staff_last_epoch_value">最後の%1$d秒: 歩数 %2$d・揺れ %3$.1f mg（家のことのしきい値 %4$.0f mg）</string>
+
+    <!-- 記録中のお知らせ -->
+    <string name="recording_channel_name">記録中のお知らせ</string>
+    <string name="recording_channel_description">1日の動きを記録しているあいだ表示します</string>
+    <string name="recording_notification_title">てまりフィットネス</string>
+    <string name="recording_notification_text">きょうの動きを 記録しています</string>
 
     <!-- 初回設定 -->
     <string name="onboarding_welcome_title">ようこそ</string>
     <string name="onboarding_name_title">よび名</string>
     <string name="onboarding_notification_title">お知らせの許可</string>
+    <string name="onboarding_motion_title">動きの記録の許可</string>
+    <string name="onboarding_motion_text">歩いた数や 体の動きを 記録するために、つぎの画面で「許可」を えらんでください。</string>
+    <string name="onboarding_motion_granted">✓ 動きの記録は 許可されています</string>
     <string name="onboarding_battery_title">電池の設定</string>
     <string name="onboarding_goal_title">1日の目標</string>
     <string name="onboarding_done_title">じゅんびができました</string>

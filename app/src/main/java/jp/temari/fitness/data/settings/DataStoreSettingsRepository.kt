@@ -33,6 +33,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val USER_ID = stringPreferencesKey("user_id")
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        val DATA_SOURCE = stringPreferencesKey("data_source")
     }
 
     override val settings: Flow<UserSettings> = dataStore.data.map { prefs ->
@@ -44,6 +45,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
             dailyGoal = prefs[Keys.DAILY_GOAL] ?: ActivityConfig.DEFAULT_DAILY_GOAL,
             userId = prefs[Keys.USER_ID],
             onboardingCompleted = prefs[Keys.ONBOARDING_COMPLETED] ?: false,
+            dataSource = DataSource.entries.firstOrNull { it.name == prefs[Keys.DATA_SOURCE] } ?: DataSource.Sensor,
         )
     }
 
@@ -68,6 +70,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
             id = prefs[Keys.USER_ID] ?: UUID.randomUUID().toString().also { prefs[Keys.USER_ID] = it }
         }
         return id
+    }
+
+    override suspend fun setDataSource(dataSource: DataSource) {
+        dataStore.edit { it[Keys.DATA_SOURCE] = dataSource.name }
     }
 
     override suspend fun setOnboardingCompleted(completed: Boolean) {

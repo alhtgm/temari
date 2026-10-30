@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
  * @property dailyGoal 1日の目標ポイント。
  * @property userId 利用者ID（UUID）。初回設定で発行する。まだなら null。
  * @property onboardingCompleted 初回設定を終えたか。終えていれば起動時にホームを直接出す。
+ * @property dataSource 画面に出すデータを、本物の計測とモックのどちらから取るか。
  */
 data class UserSettings(
     val textSize: TextSizeOption = TextSizeOption.Large,
@@ -19,7 +20,17 @@ data class UserSettings(
     val dailyGoal: Int = ActivityConfig.DEFAULT_DAILY_GOAL,
     val userId: String? = null,
     val onboardingCompleted: Boolean = false,
+    val dataSource: DataSource = DataSource.Sensor,
 )
+
+/** 画面に出すデータの出どころ（スタッフ・開発用画面で切り替える）。 */
+enum class DataSource {
+    /** 本物の計測（スマホのセンサー）。初期値。 */
+    Sensor,
+
+    /** モック（決めておいたシナリオの値）。画面の確認や説明に使う。 */
+    Mock,
+}
 
 /**
  * 設定の保存と読み出しの窓口。
@@ -41,6 +52,9 @@ interface SettingsRepository {
 
     /** 利用者IDが無ければ新しく発行（UUID）して保存し、その ID を返す。すでにあればそのまま返す。 */
     suspend fun ensureUserId(): String
+
+    /** データの出どころ（本物の計測／モック）を保存する。 */
+    suspend fun setDataSource(dataSource: DataSource)
 
     /** 初回設定を終えたかどうかを保存する。 */
     suspend fun setOnboardingCompleted(completed: Boolean)

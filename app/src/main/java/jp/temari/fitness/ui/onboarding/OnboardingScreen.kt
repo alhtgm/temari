@@ -56,6 +56,7 @@ enum class OnboardingStep(@StringRes val titleRes: Int) {
     Welcome(R.string.onboarding_welcome_title),
     Name(R.string.onboarding_name_title),
     Notification(R.string.onboarding_notification_title),
+    Motion(R.string.onboarding_motion_title),
     Battery(R.string.onboarding_battery_title),
     Goal(R.string.onboarding_goal_title),
     Done(R.string.onboarding_done_title),
@@ -93,6 +94,10 @@ fun OnboardingRoute(
     val notificationLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { notificationAnswered = true }
+    // 「身体活動」の許可も同じしくみで、答えが出たら次へ進む。
+    val motionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { notificationAnswered = true }
     LifecycleResumeEffect(notificationAnswered) {
         if (notificationAnswered) {
             notificationAnswered = false
@@ -112,6 +117,7 @@ fun OnboardingRoute(
         nickname = nickname,
         onNicknameChange = { nickname = it.take(ActivityConfig.NICKNAME_MAX_LENGTH) },
         notificationGranted = isNotificationGranted(context),
+        motionGranted = isMotionGranted(context),
         batteryExempt = batteryExempt,
         onOpenBatterySettings = {
             try {
@@ -138,6 +144,12 @@ fun OnboardingRoute(
                     } else {
                         onNext()
                     }
+                OnboardingStep.Motion ->
+                    if (isMotionGranted(context)) {
+                        onNext()
+                    } else {
+                        motionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+                    }
                 OnboardingStep.Done -> viewModel.onComplete(onNext)
                 else -> onNext()
             }
@@ -150,6 +162,7 @@ fun OnboardingRoute(
  * 初回設定の1段階ぶんの画面（表示だけ）。6つの段階を同じ形の画面で表す。
  *
  * @param notificationGranted 通知がすでに許可されているか。
+ * @param motionGranted 「身体活動」がすでに許可されているか。
  * @param batteryExempt 電池の最適化からすでに外れているか。
  */
 @Composable
@@ -158,6 +171,7 @@ fun OnboardingScreen(
     nickname: String,
     onNicknameChange: (String) -> Unit,
     notificationGranted: Boolean,
+    motionGranted: Boolean,
     batteryExempt: Boolean,
     onOpenBatterySettings: () -> Unit,
     goal: Int,
@@ -207,6 +221,10 @@ fun OnboardingScreen(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     modifier = Modifier.fillMaxWidth(),
                 )
+            }
+            OnboardingStep.Motion -> {
+                BodyText(R.string.onboarding_motion_text)
+                if (motionGranted) DoneText(R.string.onboarding_motion_granted)
             }
             OnboardingStep.Notification -> {
                 BodyText(R.string.onboarding_notification_text)
@@ -269,6 +287,11 @@ private fun isNotificationGranted(context: Context): Boolean =
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
         PackageManager.PERMISSION_GRANTED
 
+/** 「身体活動」（歩数計を読む）が許可されているか。 */
+private fun isMotionGranted(context: Context): Boolean =
+    ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION) ==
+        PackageManager.PERMISSION_GRANTED
+
 /** 通知の許可を求める必要があるか（Android 13 以上で、まだ許可されていない）。 */
 private fun needsNotificationRequest(context: Context): Boolean = !isNotificationGranted(context)
 
@@ -284,6 +307,7 @@ private fun PreviewStep(step: OnboardingStep) {
         nickname = "はなこ",
         onNicknameChange = {},
         notificationGranted = false,
+        motionGranted = false,
         batteryExempt = false,
         onOpenBatterySettings = {},
         goal = ActivityConfig.DEFAULT_DAILY_GOAL,

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import jp.temari.fitness.TemariApplication
 import jp.temari.fitness.data.settings.SettingsRepository
 import jp.temari.fitness.data.settings.UserSettings
+import jp.temari.fitness.service.RecordingController
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -16,7 +17,10 @@ import kotlinx.coroutines.launch
 /**
  * 初回設定の ViewModel。入力された値はその場で保存する（途中でアプリを閉じても入れた分は残る）。
  */
-class OnboardingViewModel(private val repository: SettingsRepository) : ViewModel() {
+class OnboardingViewModel(
+    private val repository: SettingsRepository,
+    private val recordingController: RecordingController,
+) : ViewModel() {
 
     /** 保存されている設定。最初の値が届くまでは null。 */
     val settings: StateFlow<UserSettings?> =
@@ -42,6 +46,8 @@ class OnboardingViewModel(private val repository: SettingsRepository) : ViewMode
     fun onComplete(onDone: () -> Unit) {
         viewModelScope.launch {
             repository.setOnboardingCompleted(true)
+            // 初回設定が終わったら、すぐに記録を始める。
+            recordingController.startIfReady()
             onDone()
         }
     }
@@ -51,7 +57,7 @@ class OnboardingViewModel(private val repository: SettingsRepository) : ViewMode
         val Factory = viewModelFactory {
             initializer {
                 val container = (this[APPLICATION_KEY] as TemariApplication).container
-                OnboardingViewModel(container.settingsRepository)
+                OnboardingViewModel(container.settingsRepository, container.recordingController)
             }
         }
     }

@@ -1,5 +1,9 @@
 package jp.temari.fitness.ui.home
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -29,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.temari.fitness.R
@@ -85,9 +91,22 @@ fun HomeRoute(
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    // 「身体活動」の許可が無いと記録を始められないので、無ければ先に許可を求めてから再開する。
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { viewModel.onResumeRecording() }
     HomeScreen(
         state = state,
-        onResumeRecording = viewModel::onResumeRecording,
+        onResumeRecording = {
+            val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION) ==
+                PackageManager.PERMISSION_GRANTED
+            if (granted) {
+                viewModel.onResumeRecording()
+            } else {
+                permissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+            }
+        },
         menu = HomeMenuActions(onOpenReview, onOpenBingo, onOpenJourney, onOpenExercise),
         onOpenSettings = onOpenSettings,
     )

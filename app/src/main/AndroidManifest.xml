@@ -5,6 +5,15 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- 初回設定で「電池の最適化から外す」画面を開くために必要。 -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- 歩数計を読むのに必要（「身体活動」の許可）。健康の種類のフォアグラウンドサービスにも必要。 -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <!-- 画面を閉じても記録を続けるフォアグラウンドサービス（種類: health）。 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
+    <!-- 画面が消えても加速度を読み続けるため、CPU を眠らせない。 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 端末を再起動したあとに記録を自動で始め直す。 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".TemariApplication"
@@ -33,6 +42,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 1日の動きを記録し続けるサービス。exported="false": ほかのアプリからは呼べない。 -->
+        <service
+            android:name=".service.RecordingService"
+            android:exported="false"
+            android:foregroundServiceType="health" />
+
+        <!-- 再起動・アプリの更新のあとに記録を始め直す。 -->
+        <receiver
+            android:name=".service.BootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
