@@ -23,8 +23,59 @@ object UiConfig {
     /** 文字と文字のあいだなど、小さめの余白。 */
     val SmallSpacing = 8.dp
 
-    /** カードの角の丸み。 */
-    val CornerRadius = 16.dp
+    /** ボタンや小さなカードの角の丸み。 */
+    val CornerRadius = 20.dp
+
+    /** 大きなカードの角の丸み。 */
+    val CardCornerRadius = 28.dp
+
+    /** カードの影の高さ。浮いて見える程度に小さくする。 */
+    val CardElevation = 3.dp
+
+    /** カードの内側の余白。 */
+    val CardPadding = 20.dp
+
+    /** ホームのメニューのタイル（ふりかえり・ビンゴなど）の最低の高さ。 */
+    val MenuTileMinHeight = 112.dp
+
+    /** タイルなどに出す絵文字の大きさ（sp）。絵文字は飾りなので、文字の大きさ設定では大きくしない。 */
+    const val TILE_EMOJI_SP = 36f
+
+    /** ホームの進み具合の輪の太さ。 */
+    val RingStroke = 18.dp
+
+    /** ホームの進み具合の輪の大きさ（直径）。数字は輪の外に出すので、特大の文字でも輪の大きさは変えない。 */
+    val RingSize = 184.dp
+
+    /** 輪の中に入れる手まりちゃんの大きさ。 */
+    val MascotInRing = 124.dp
+
+    /** 手まりちゃん（キャラクター）の大きさ（ホームの上）。 */
+    val MascotSmall = 72.dp
+
+    /** 手まりちゃんの大きさ（たいそう・初回設定など大きく出すとき）。 */
+    val MascotLarge = 140.dp
+
+    /** 手まりちゃんがぴょんぴょん弾む高さ。 */
+    val MascotBounce = 6.dp
+
+    /** 手まりちゃんが1回弾むのにかかる時間（ミリ秒）。ゆっくりにして、落ち着いた動きにする。 */
+    const val MASCOT_BOUNCE_MILLIS = 1_400
+
+    /** 数字が 0 から増えていくアニメーションの時間（ミリ秒）。 */
+    const val COUNT_UP_MILLIS = 1_200
+
+    /** 紙ふぶきの粒の数。 */
+    const val CONFETTI_COUNT = 70
+
+    /** 紙ふぶきが落ちきるまでの時間（ミリ秒）。 */
+    const val CONFETTI_MILLIS = 3_500
+
+    /** 「● 記録中」の点がゆっくり明るくなったり暗くなったりする時間（ミリ秒）。 */
+    const val PULSE_MILLIS = 1_200
+
+    /** グラフの棒が伸びるアニメーションの時間（ミリ秒）。 */
+    const val CHART_GROW_MILLIS = 700
 
     /** 枠線の太さ。 */
     val BorderWidth = 2.dp
@@ -55,6 +106,9 @@ object UiConfig {
 
     /** ビンゴのマスの最低の高さ（文字が多いときは伸びる）。 */
     val BingoCellMinHeight = 110.dp
+
+    /** ビンゴのマスの絵文字の大きさ（sp）。 */
+    const val BINGO_EMOJI_SP = 28f
 
     /** ビンゴのそろった列に引く線の太さ。 */
     val BingoLineWidth = 12.dp

@@ -11,6 +11,7 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,8 +38,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.temari.fitness.R
 import jp.temari.fitness.config.ActivityConfig
 import jp.temari.fitness.config.TextSizeOption
+import jp.temari.fitness.config.UiConfig
 import jp.temari.fitness.ui.components.BigButton
 import jp.temari.fitness.ui.components.GoalStepper
+import jp.temari.fitness.ui.components.Mascot
+import jp.temari.fitness.ui.components.MascotMood
 import jp.temari.fitness.ui.components.ScreenFrame
 import jp.temari.fitness.ui.theme.TemariTheme
 import jp.temari.fitness.ui.theme.TextSizePreviewProvider
@@ -181,6 +186,7 @@ fun OnboardingScreen(
     ) {
         when (step) {
             OnboardingStep.Welcome -> {
+                BigMascot(MascotMood.Happy)
                 BodyText(R.string.onboarding_welcome_line1)
                 BodyText(R.string.onboarding_welcome_line2)
                 BodyText(R.string.onboarding_welcome_line3)
@@ -226,8 +232,19 @@ fun OnboardingScreen(
                 )
                 GoalStepper(goal = goal, onGoalChange = onGoalChange)
             }
-            OnboardingStep.Done -> BodyText(R.string.onboarding_done_text)
+            OnboardingStep.Done -> {
+                BigMascot(MascotMood.Excited)
+                BodyText(R.string.onboarding_done_text)
+            }
         }
+    }
+}
+
+/** 画面の真ん中に大きく出す手まりちゃん。 */
+@Composable
+private fun BigMascot(mood: MascotMood) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Mascot(mood = mood, size = UiConfig.MascotLarge)
     }
 }
 

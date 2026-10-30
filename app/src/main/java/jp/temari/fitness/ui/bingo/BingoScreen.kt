@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -45,6 +46,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.temari.fitness.R
@@ -56,8 +58,9 @@ import jp.temari.fitness.data.BingoCellId
 import jp.temari.fitness.data.fake.MockScenario
 import jp.temari.fitness.ui.common.PreviewData
 import jp.temari.fitness.ui.components.BigButton
+import jp.temari.fitness.ui.components.Confetti
 import jp.temari.fitness.ui.components.ScreenFrame
-import jp.temari.fitness.ui.theme.AttentionOrange
+import jp.temari.fitness.ui.theme.TemariVermilion
 import jp.temari.fitness.ui.theme.TemariTheme
 import jp.temari.fitness.ui.theme.TextSizePreviewProvider
 import kotlinx.coroutines.flow.first
@@ -95,18 +98,36 @@ fun BingoScreen(
     onDialogDismiss: () -> Unit,
     onBack: () -> Unit,
 ) {
-    ScreenFrame(
-        title = state?.card?.let { weekTitle(it) } ?: stringResource(R.string.bingo_title),
-        bottomBar = {
-            BigButton(text = stringResource(R.string.button_back), onClick = onBack)
-        },
-    ) {
-        if (state != null) {
-            if (state.card.hasBingo) {
-                // 列の数が変わったら（シナリオ切り替えなど）演出をやり直す。
-                BingoCelebration(key = state.card.completedLines.size)
+    Box {
+        ScreenFrame(
+            title = state?.card?.let { weekTitle(it) } ?: stringResource(R.string.bingo_title),
+            emoji = stringResource(R.string.emoji_bingo),
+            bottomBar = {
+                BigButton(
+                    text = stringResource(R.string.button_back),
+                    onClick = onBack,
+                    emoji = stringResource(R.string.emoji_back),
+                )
+            },
+        ) {
+            if (state != null) {
+                if (state.card.hasBingo) {
+                    // 列の数が変わったら（シナリオ切り替えなど）演出をやり直す。
+                    BingoCelebration(key = state.card.completedLines.size)
+                }
+                BingoGrid(card = state.card, onCellClick = onCellClick)
+                Text(
+                    text = stringResource(R.string.bingo_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
-            BingoGrid(card = state.card, onCellClick = onCellClick)
+        }
+        if (state?.card?.hasBingo == true) {
+            // 画面全体に紙ふぶきを降らせる。
+            Confetti(key = state.card.completedLines.size, modifier = Modifier.matchParentSize())
         }
     }
     val selected = state?.selectedCell
@@ -177,7 +198,7 @@ private fun BingoGrid(card: BingoCard, onCellClick: (BingoCellId) -> Unit) {
                 val from = start - gridOrigin
                 val to = end - gridOrigin
                 drawLine(
-                    color = AttentionOrange.copy(alpha = UiConfig.BINGO_LINE_ALPHA),
+                    color = TemariVermilion.copy(alpha = UiConfig.BINGO_LINE_ALPHA),
                     start = from,
                     end = from + (to - from) * lineProgress.value,
                     strokeWidth = UiConfig.BingoLineWidth.toPx(),
@@ -192,17 +213,20 @@ private fun BingoGrid(card: BingoCard, onCellClick: (BingoCellId) -> Unit) {
 @Composable
 private fun BingoCellView(cell: BingoCell, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val title = bingoCellTitle(cell.id)
+    val emoji = bingoCellEmoji(cell.id)
     val description = stringResource(
         if (cell.achieved) R.string.bingo_cell_open_description else R.string.bingo_cell_closed_description,
         title,
     )
-    val background = if (cell.achieved) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background
-    val textColor = if (cell.achieved) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onBackground
+    val background = if (cell.achieved) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surface
+    val textColor = if (cell.achieved) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
+    val borderColor = if (cell.achieved) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline
     Column(
         modifier = modifier
             .heightIn(min = UiConfig.BingoCellMinHeight)
+            .shadow(UiConfig.CardElevation, CellShape)
             .background(background, CellShape)
-            .border(UiConfig.BorderWidth, MaterialTheme.colorScheme.outline, CellShape)
+            .border(UiConfig.BorderWidth, borderColor, CellShape)
             .clickable(onClick = onClick)
             .clearAndSetSemantics {
                 contentDescription = description
@@ -212,13 +236,12 @@ private fun BingoCellView(cell: BingoCell, onClick: () -> Unit, modifier: Modifi
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        if (cell.achieved) {
-            Text(
-                text = stringResource(R.string.bingo_check_mark),
-                style = MaterialTheme.typography.titleLarge,
-                color = textColor,
-            )
-        }
+        Text(
+            // 開いたマスは「✓」を付けて、色だけでなく印でも分かるようにする。
+            text = if (cell.achieved) stringResource(R.string.bingo_check_with_emoji, emoji) else emoji,
+            fontSize = UiConfig.BINGO_EMOJI_SP.sp,
+            color = textColor,
+        )
         Text(
             text = title,
             style = MaterialTheme.typography.bodySmall,
@@ -245,7 +268,7 @@ private fun BingoCelebration(key: Int) {
     Text(
         text = stringResource(R.string.bingo_celebration),
         style = MaterialTheme.typography.displayLarge,
-        color = AttentionOrange,
+        color = TemariVermilion,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .fillMaxWidth()

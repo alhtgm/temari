@@ -18,9 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import jp.temari.fitness.config.UiConfig
+import jp.temari.fitness.ui.theme.TemariBlueLight
 
 /**
  * すべての画面で使う共通の枠。
@@ -28,8 +30,10 @@ import jp.temari.fitness.config.UiConfig
  * - 内容の幅は最大 480dp にして中央に寄せる（タブレットでもスマホに近い見た目にするため）。
  * - 上にタイトル、真ん中にスクロールできる内容、下に固定のボタン（「もどる」など）を置く。
  * - 下のボタンはスクロールしても動かないので、特大の文字で内容が長くなっても必ず押せる。
+ * - 背景は上がうすい藍色、下が白のグラデーションにして、のっぺりしないようにする。
  *
  * @param title 画面のタイトル。null ならタイトルを出さない（ホームのあいさつなど、画面側で出す場合）。
+ * @param emoji タイトルの前に付ける絵文字（飾り）。
  * @param bottomBar 画面下に固定するボタンなど。
  * @param content 画面の中身。
  */
@@ -37,13 +41,19 @@ import jp.temari.fitness.config.UiConfig
 fun ScreenFrame(
     title: String?,
     modifier: Modifier = Modifier,
+    emoji: String? = null,
     bottomBar: @Composable ColumnScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(
+                Brush.verticalGradient(
+                    0f to TemariBlueLight,
+                    0.45f to MaterialTheme.colorScheme.background,
+                ),
+            )
             // 画面上のステータスバーや下のナビゲーションバーに内容が隠れないようにする。
             .safeDrawingPadding(),
         contentAlignment = Alignment.TopCenter,
@@ -58,7 +68,7 @@ fun ScreenFrame(
         ) {
             if (title != null) {
                 Text(
-                    text = title,
+                    text = if (emoji != null) "$emoji $title" else title,
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     // 読み上げ機能（TalkBack）に「見出し」だと伝える。

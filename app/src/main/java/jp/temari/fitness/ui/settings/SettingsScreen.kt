@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -22,8 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +36,7 @@ import jp.temari.fitness.ui.components.BigButton
 import jp.temari.fitness.ui.components.ChoiceButtons
 import jp.temari.fitness.ui.components.GoalStepper
 import jp.temari.fitness.ui.components.ScreenFrame
+import jp.temari.fitness.ui.components.TemariCard
 import jp.temari.fitness.ui.theme.TemariTheme
 import jp.temari.fitness.ui.theme.TextSizePreviewProvider
 
@@ -82,8 +80,13 @@ fun SettingsScreen(
 ) {
     ScreenFrame(
         title = stringResource(R.string.settings_title),
+        emoji = stringResource(R.string.emoji_settings),
         bottomBar = {
-            BigButton(text = stringResource(R.string.button_back), onClick = onBack)
+            BigButton(
+                text = stringResource(R.string.button_back),
+                onClick = onBack,
+                emoji = stringResource(R.string.emoji_back),
+            )
             Text(
                 text = stringResource(R.string.settings_staff_entry),
                 style = MaterialTheme.typography.bodySmall,
@@ -98,7 +101,10 @@ fun SettingsScreen(
         },
     ) {
         if (state != null) {
-            Section(title = stringResource(R.string.settings_text_size_label)) {
+            TemariCard(
+                title = stringResource(R.string.settings_text_size_label),
+                emoji = stringResource(R.string.emoji_text_size),
+            ) {
                 ChoiceButtons(
                     options = TextSizeOption.entries,
                     selected = state.settings.textSize,
@@ -113,8 +119,10 @@ fun SettingsScreen(
                     onSelect = onTextSizeSelect,
                 )
             }
-            HorizontalDivider()
-            Section(title = stringResource(R.string.settings_nickname_label)) {
+            TemariCard(
+                title = stringResource(R.string.settings_nickname_label),
+                emoji = stringResource(R.string.emoji_nickname),
+            ) {
                 NicknameEditor(
                     saved = state.settings.nickname,
                     showSavedMessage = state.nicknameSaved,
@@ -122,24 +130,13 @@ fun SettingsScreen(
                     onSave = onNicknameSave,
                 )
             }
-            HorizontalDivider()
-            Section(title = stringResource(R.string.settings_goal_label)) {
+            TemariCard(
+                title = stringResource(R.string.settings_goal_label),
+                emoji = stringResource(R.string.emoji_goal),
+            ) {
                 GoalStepper(goal = state.settings.dailyGoal, onGoalChange = onGoalChange)
             }
         }
-    }
-}
-
-/** 見出しつきのまとまり。 */
-@Composable
-private fun Section(title: String, content: @Composable () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(UiConfig.SmallSpacing)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.semantics { heading() },
-        )
-        content()
     }
 }
 

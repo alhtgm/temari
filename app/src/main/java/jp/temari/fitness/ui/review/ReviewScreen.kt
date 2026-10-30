@@ -22,6 +22,7 @@ import jp.temari.fitness.ui.components.ChartLegend
 import jp.temari.fitness.ui.components.ChoiceButtons
 import jp.temari.fitness.ui.components.ScreenFrame
 import jp.temari.fitness.ui.components.StackedBarChart
+import jp.temari.fitness.ui.components.TemariCard
 import jp.temari.fitness.ui.theme.TemariTheme
 import jp.temari.fitness.ui.theme.TextSizePreviewProvider
 import kotlinx.coroutines.flow.first
@@ -52,18 +53,27 @@ fun ReviewScreen(
 ) {
     ScreenFrame(
         title = stringResource(R.string.review_title),
+        emoji = stringResource(R.string.emoji_review),
         bottomBar = {
-            BigButton(text = stringResource(R.string.button_back), onClick = onBack)
+            BigButton(
+                text = stringResource(R.string.button_back),
+                onClick = onBack,
+                emoji = stringResource(R.string.emoji_back),
+            )
         },
     ) {
         ModeSwitch(selected = state?.mode ?: ReviewMode.Today, onSelectMode = onSelectMode)
         if (state != null) {
-            when (state.mode) {
-                ReviewMode.Today -> StackedBarChart(bars = todayBars(state))
-                ReviewMode.Week -> StackedBarChart(bars = weekBars(state))
+            TemariCard {
+                when (state.mode) {
+                    ReviewMode.Today -> StackedBarChart(bars = todayBars(state))
+                    ReviewMode.Week -> StackedBarChart(bars = weekBars(state))
+                }
+                ChartLegend()
             }
-            ChartLegend()
-            SummaryText(state)
+            TemariCard(color = MaterialTheme.colorScheme.tertiaryContainer) {
+                SummaryText(state)
+            }
         }
     }
 }

@@ -69,7 +69,11 @@ fun StaffScreen(
     ScreenFrame(
         title = stringResource(R.string.staff_title),
         bottomBar = {
-            BigButton(text = stringResource(R.string.button_back), onClick = onBack)
+            BigButton(
+                text = stringResource(R.string.button_back),
+                onClick = onBack,
+                emoji = stringResource(R.string.emoji_back),
+            )
         },
     ) {
         if (state != null) {

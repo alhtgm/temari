@@ -24,6 +24,22 @@ fun bingoCellTitle(id: BingoCellId): String = stringResource(
     },
 )
 
+/** マスの飾りの絵文字（名前といっしょに出す）。 */
+@Composable
+fun bingoCellEmoji(id: BingoCellId): String = stringResource(
+    when (id) {
+        BingoCellId.MorningActive -> R.string.bingo_morning_active_emoji
+        BingoCellId.GoalOnce -> R.string.bingo_goal_once_emoji
+        BingoCellId.LifeMaster -> R.string.bingo_life_master_emoji
+        BingoCellId.NightLittle -> R.string.bingo_night_little_emoji
+        BingoCellId.Free -> R.string.bingo_free_emoji
+        BingoCellId.WalkGood -> R.string.bingo_walk_good_emoji
+        BingoCellId.RecordStreak -> R.string.bingo_record_streak_emoji
+        BingoCellId.GoalThreeTimes -> R.string.bingo_goal_three_emoji
+        BingoCellId.EveryDay -> R.string.bingo_every_day_emoji
+    },
+)
+
 /**
  * マスの条件の説明。
  *

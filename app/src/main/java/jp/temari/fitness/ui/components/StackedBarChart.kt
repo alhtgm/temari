@@ -1,5 +1,8 @@
 package jp.temari.fitness.ui.components
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +14,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -24,10 +29,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import jp.temari.fitness.R
 import jp.temari.fitness.config.UiConfig
-import jp.temari.fitness.ui.theme.AttentionOrange
 import jp.temari.fitness.ui.theme.LifeGreenLight
 import jp.temari.fitness.ui.theme.TemariBlue
 import jp.temari.fitness.ui.theme.TemariGreen
+import jp.temari.fitness.ui.theme.TemariVermilion
 
 /**
  * 積み上げ棒グラフの1本分。
@@ -56,6 +61,11 @@ data class ChartBar(
 fun StackedBarChart(bars: List<ChartBar>, modifier: Modifier = Modifier) {
     // いちばん高い棒を基準に高さを決める。全部 0 のときに 0 で割らないよう 1 以上にする。
     val maxTotal = bars.maxOfOrNull { it.walkPoints + it.lifePoints }?.coerceAtLeast(1) ?: 1
+    // 棒が下から伸びてくるアニメーション。表示する棒が変わったら（きょう／今週の切り替え）やり直す。
+    val grow = remember(bars) { Animatable(0f) }
+    LaunchedEffect(bars) {
+        grow.animateTo(1f, tween(UiConfig.CHART_GROW_MILLIS, easing = FastOutSlowInEasing))
+    }
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -73,7 +83,7 @@ fun StackedBarChart(bars: List<ChartBar>, modifier: Modifier = Modifier) {
                         Text(
                             text = stringResource(R.string.review_achieved_star),
                             style = MaterialTheme.typography.titleLarge,
-                            color = AttentionOrange,
+                            color = TemariVermilion,
                         )
                         Text(
                             text = stringResource(R.string.review_achieved_text),
@@ -85,7 +95,7 @@ fun StackedBarChart(bars: List<ChartBar>, modifier: Modifier = Modifier) {
                     Canvas(
                         modifier = Modifier
                             .fillMaxWidth(UiConfig.CHART_BAR_WIDTH_FRACTION)
-                            .height(UiConfig.ChartBarAreaHeight * fraction),
+                            .height(UiConfig.ChartBarAreaHeight * fraction * grow.value),
                     ) {
                         drawStackedBar(bar.walkPoints, bar.lifePoints)
                     }

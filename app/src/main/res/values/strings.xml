@@ -2,6 +2,18 @@
 <resources>
     <string name="app_name">てまりフィットネス</string>
 
+    <!-- 飾りの絵文字（文字といっしょに出す。絵文字だけで意味を伝えない） -->
+    <string name="emoji_settings">⚙️</string>
+    <string name="emoji_walk">👟</string>
+    <string name="emoji_life">🏠</string>
+    <string name="emoji_resume">▶️</string>
+    <string name="emoji_review">📊</string>
+    <string name="emoji_bingo">🎯</string>
+    <string name="emoji_back">⬅️</string>
+    <string name="emoji_text_size">🔤</string>
+    <string name="emoji_nickname">😊</string>
+    <string name="emoji_goal">🎯</string>
+
     <!-- 共通のボタン -->
     <string name="button_back">もどる</string>
     <string name="button_next">つぎへ</string>
@@ -22,12 +34,16 @@
     <string name="home_points_label">きょうの活動ポイント</string>
     <string name="home_points_value">%1$,d</string>
     <string name="home_points_unit">ポイント</string>
-    <string name="home_goal_value">目標 %1$,d</string>
+    <string name="home_points_a11y">きょうの活動ポイント %1$,d ポイント</string>
+    <string name="home_goal_value_percent">目標 %1$,d ポイント（%2$d%%）</string>
     <string name="home_goal_remaining">目標まで あと %1$,d</string>
-    <string name="home_goal_achieved">目標たっせい！</string>
-    <string name="home_walk_points">歩いた %1$,dポイント（約 %2$,d歩）</string>
-    <string name="home_life_points">家のこと %1$,dポイント</string>
-    <string name="home_recording">● 記録中</string>
+    <string name="home_goal_achieved">🎉 目標たっせい！</string>
+    <string name="home_date">%1$d月%2$d日（%3$s）</string>
+    <string name="home_walk_label">歩いた</string>
+    <string name="home_life_label">家のこと</string>
+    <string name="home_points_short">%1$,d ポイント</string>
+    <string name="home_steps_about">約 %1$,d歩</string>
+    <string name="home_recording_text">記録中</string>
     <string name="home_stopped">記録が止まっています</string>
     <string name="home_button_resume">再開する</string>
 
@@ -72,6 +88,17 @@
     <string name="bingo_week_range">今週のビンゴ（%1$d月%2$d日〜%3$d月%4$d日）</string>
     <string name="bingo_celebration">ビンゴ！</string>
     <string name="bingo_check_mark">✓</string>
+    <string name="bingo_check_with_emoji">✓%1$s</string>
+    <string name="bingo_hint">マスを おすと、せつめいが 出ます</string>
+    <string name="bingo_morning_active_emoji">🌅</string>
+    <string name="bingo_goal_once_emoji">🎯</string>
+    <string name="bingo_life_master_emoji">🧹</string>
+    <string name="bingo_night_little_emoji">🌙</string>
+    <string name="bingo_free_emoji">⭐</string>
+    <string name="bingo_walk_good_emoji">👟</string>
+    <string name="bingo_record_streak_emoji">📅</string>
+    <string name="bingo_goal_three_emoji">🏆</string>
+    <string name="bingo_every_day_emoji">🌱</string>
     <string name="bingo_cell_open_description">%1$s、あいています</string>
     <string name="bingo_cell_closed_description">%1$s、これから</string>
     <string name="bingo_dialog_open">✓ あきました</string>

@@ -5,19 +5,24 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +31,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.temari.fitness.R
+import jp.temari.fitness.config.ActivityConfig
 import jp.temari.fitness.config.TextSizeOption
 import jp.temari.fitness.config.UiConfig
 import jp.temari.fitness.data.DailyActivity
@@ -34,17 +40,30 @@ import jp.temari.fitness.data.fake.MockScenario
 import jp.temari.fitness.ui.common.PreviewData
 import jp.temari.fitness.ui.common.labelRes
 import jp.temari.fitness.ui.components.BigButton
+import jp.temari.fitness.ui.components.Confetti
+import jp.temari.fitness.ui.components.Mascot
+import jp.temari.fitness.ui.components.MascotMood
+import jp.temari.fitness.ui.components.MenuTile
+import jp.temari.fitness.ui.components.ProgressRing
+import jp.temari.fitness.ui.components.PulsingDot
 import jp.temari.fitness.ui.components.ScreenFrame
+import jp.temari.fitness.ui.components.TemariCard
+import jp.temari.fitness.ui.components.rememberCountUp
 import jp.temari.fitness.ui.theme.AttentionBackground
 import jp.temari.fitness.ui.theme.AttentionOrange
+import jp.temari.fitness.ui.theme.HeroGradientEnd
+import jp.temari.fitness.ui.theme.HeroGradientStart
+import jp.temari.fitness.ui.theme.TemariBlue
+import jp.temari.fitness.ui.theme.TemariBlueLight
+import jp.temari.fitness.ui.theme.TemariGreen
+import jp.temari.fitness.ui.theme.TemariGreenLight
 import jp.temari.fitness.ui.theme.TemariTheme
+import jp.temari.fitness.ui.theme.TemariVermilion
+import jp.temari.fitness.ui.theme.TemariYellow
 import jp.temari.fitness.ui.theme.TextSizePreviewProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
-
-/** カードの形（角を丸くする）。 */
-private val CardShape = RoundedCornerShape(UiConfig.CornerRadius)
 
 /**
  * ホーム画面（ViewModel とつなぐ側）。
@@ -71,7 +90,7 @@ fun HomeRoute(
 /**
  * ホーム画面（表示だけ）。アプリの中心で、ここから各画面へ1段だけ進む。
  *
- * @param state 表示する内容。null（読み込み中）のときはボタンだけを出す。
+ * @param state 表示する内容。null（読み込み中）のときはメニューだけを出す。
  */
 @Composable
 fun HomeScreen(
@@ -89,24 +108,24 @@ fun HomeScreen(
                 text = stringResource(R.string.home_button_settings),
                 onClick = onOpenSettings,
                 primary = false,
+                emoji = stringResource(R.string.emoji_settings),
             )
         },
     ) {
         if (state != null) {
-            GreetingText(state.nickname, state.greeting)
-            PointsCard(state.today)
+            GreetingHeader(state.nickname, state.greeting, state.today)
+            HeroCard(state.today)
+            MessageCard(state.message, state.today)
             Breakdown(state.today)
-            MessageText(state.message)
             RecordingStatusView(state.status, onResumeRecording)
         }
-        BigButton(text = stringResource(R.string.home_button_review), onClick = onOpenReview)
-        BigButton(text = stringResource(R.string.home_button_bingo), onClick = onOpenBingo)
+        MenuGrid(onOpenReview = onOpenReview, onOpenBingo = onOpenBingo)
     }
 }
 
-/** 「◯◯さん、こんにちは」。呼び名が空なら「こんにちは」だけ。 */
+/** 日付と「◯◯さん、こんにちは」。呼び名が空なら「こんにちは」だけ。 */
 @Composable
-private fun GreetingText(nickname: String, greeting: Greeting) {
+private fun GreetingHeader(nickname: String, greeting: Greeting, today: DailyActivity) {
     val greetingText = stringResource(
         when (greeting) {
             Greeting.Morning -> R.string.greeting_morning
@@ -119,97 +138,118 @@ private fun GreetingText(nickname: String, greeting: Greeting) {
     } else {
         stringResource(R.string.home_greeting_with_name, nickname, greetingText)
     }
-    Text(
-        text = text,
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier.semantics { heading() },
-    )
-}
-
-/** 画面の中心: きょうの活動ポイント（いちばん大きな数字）と、目標までの進み具合。 */
-@Composable
-private fun PointsCard(today: DailyActivity) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant, CardShape)
-            .padding(UiConfig.ScreenPadding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(UiConfig.SmallSpacing),
-    ) {
+    Column {
         Text(
-            text = stringResource(R.string.home_points_label),
+            text = stringResource(
+                R.string.home_date,
+                today.date.monthValue,
+                today.date.dayOfMonth,
+                stringResource(today.date.dayOfWeek.labelRes),
+            ),
             style = MaterialTheme.typography.bodyLarge,
-        )
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(
-                text = stringResource(R.string.home_points_value, today.totalPoints),
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = stringResource(R.string.home_points_unit),
-                style = MaterialTheme.typography.bodyLarge,
-                // 数字の下のラインに揃えて見えるよう、少しだけ下に余白をとる。
-                modifier = Modifier.padding(start = UiConfig.SmallSpacing / 2, bottom = UiConfig.UnitBaselineOffset),
-            )
-        }
-        ProgressBar(progress = today.progress)
-        // 進み具合は色だけでなく、必ず文字でも伝える。
-        Text(
-            text = if (today.isGoalAchieved) {
-                stringResource(R.string.home_goal_achieved)
-            } else {
-                stringResource(R.string.home_goal_remaining, today.goal - today.totalPoints)
-            },
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.outline,
         )
         Text(
-            text = stringResource(R.string.home_goal_value, today.goal),
-            style = MaterialTheme.typography.bodySmall,
+            text = text,
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.semantics { heading() },
         )
     }
 }
 
-/** 目標までの進み具合を表す横長のバー。目標を超えても、いっぱいで止める。 */
+/**
+ * 画面の中心: きょうの活動ポイント（いちばん大きな数字）と、目標までの進み具合の輪。
+ *
+ * 輪の中には手まりちゃんがいて、進み具合で表情が変わる。目標をたっせいしたら紙ふぶきが降る。
+ */
 @Composable
-private fun ProgressBar(progress: Float) {
-    val shape = RoundedCornerShape(UiConfig.ProgressBarHeight / 2)
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(UiConfig.ProgressBarHeight)
-            .background(MaterialTheme.colorScheme.background, shape)
-            .border(UiConfig.BorderWidth, MaterialTheme.colorScheme.outline, shape),
+private fun HeroCard(today: DailyActivity) {
+    val points by rememberCountUp(today.totalPoints)
+    val percent = (today.progress * 100).toInt()
+    val pointsDescription = stringResource(R.string.home_points_a11y, today.totalPoints)
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        shadowElevation = UiConfig.CardElevation,
+        color = Color.Transparent,
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(progress.coerceIn(0f, 1f))
-                .background(MaterialTheme.colorScheme.primary, shape),
-        )
+            modifier = Modifier.background(Brush.linearGradient(listOf(HeroGradientStart, HeroGradientEnd))),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(UiConfig.CardPadding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(UiConfig.SmallSpacing),
+            ) {
+                Text(
+                    text = stringResource(R.string.home_points_label),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White,
+                )
+                // 読み上げでは、増えていく途中の数字ではなく最後の数字を読む。
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier.clearAndSetSemantics {
+                        contentDescription = pointsDescription
+                    },
+                ) {
+                    Text(
+                        text = stringResource(R.string.home_points_value, points),
+                        style = MaterialTheme.typography.displayLarge,
+                        color = Color.White,
+                    )
+                    Text(
+                        text = stringResource(R.string.home_points_unit),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White,
+                        // 数字の下のラインに揃えて見えるよう、少しだけ下に余白をとる。
+                        modifier = Modifier.padding(start = UiConfig.SmallSpacing / 2, bottom = UiConfig.UnitBaselineOffset),
+                    )
+                }
+                ProgressRing(
+                    progress = today.progress,
+                    trackColor = Color.White.copy(alpha = 0.22f),
+                    colors = listOf(TemariYellow, TemariVermilion, TemariYellow),
+                ) {
+                    Mascot(mood = moodOf(today), size = UiConfig.MascotInRing)
+                }
+                // 進み具合は色や輪だけでなく、必ず文字でも伝える。
+                Text(
+                    text = if (today.isGoalAchieved) {
+                        stringResource(R.string.home_goal_achieved)
+                    } else {
+                        stringResource(R.string.home_goal_remaining, today.goal - today.totalPoints)
+                    },
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = stringResource(R.string.home_goal_value_percent, today.goal, percent),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                )
+            }
+            if (today.isGoalAchieved) {
+                Confetti(key = today.date, modifier = Modifier.matchParentSize())
+            }
+        }
     }
 }
 
-/** 内訳2行: 歩いた／家のこと。 */
-@Composable
-private fun Breakdown(today: DailyActivity) {
-    Column(verticalArrangement = Arrangement.spacedBy(UiConfig.SmallSpacing / 2)) {
-        Text(
-            text = stringResource(R.string.home_walk_points, today.walkPoints, today.steps),
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            text = stringResource(R.string.home_life_points, today.lifePoints),
-            style = MaterialTheme.typography.bodyLarge,
-        )
-    }
+/** 進み具合に合わせた手まりちゃんの表情。 */
+private fun moodOf(today: DailyActivity): MascotMood = when {
+    today.isGoalAchieved -> MascotMood.Excited
+    today.progress >= ActivityConfig.NEAR_GOAL_RATIO / 2 -> MascotMood.Happy
+    else -> MascotMood.Calm
 }
 
-/** ひとことメッセージ。 */
+/** ひとことメッセージ。手まりちゃんの吹き出しのように見せる。 */
 @Composable
-private fun MessageText(message: HomeMessage) {
+private fun MessageCard(message: HomeMessage, today: DailyActivity) {
     val text = when (message) {
         HomeMessage.ResumeRecording -> stringResource(R.string.message_resume)
         HomeMessage.GoalAchieved -> stringResource(R.string.message_goal_achieved)
@@ -218,30 +258,100 @@ private fun MessageText(message: HomeMessage) {
             stringResource(R.string.message_best_block, stringResource(message.block.labelRes))
         HomeMessage.KeepGoing -> stringResource(R.string.message_keep_going)
     }
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.secondary,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth(),
-    )
+    TemariCard(color = MaterialTheme.colorScheme.tertiaryContainer) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(UiConfig.SmallSpacing),
+        ) {
+            Mascot(mood = moodOf(today), size = UiConfig.MascotSmall, bounce = false)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
 }
 
-/** 記録の状態。記録中は小さく、止まっているときは目立つ枠と「再開する」ボタン。 */
+/** 内訳: 歩いた／家のこと を2つのタイルで並べる。 */
+@Composable
+private fun Breakdown(today: DailyActivity) {
+    // IntrinsicSize.Min: 2つのタイルの高さを、背の高い方にそろえる。
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.spacedBy(UiConfig.ButtonSpacing),
+    ) {
+        StatTile(
+            emoji = stringResource(R.string.emoji_walk),
+            label = stringResource(R.string.home_walk_label),
+            value = stringResource(R.string.home_points_short, today.walkPoints),
+            sub = stringResource(R.string.home_steps_about, today.steps),
+            color = TemariBlueLight,
+            accent = TemariBlue,
+            modifier = Modifier.weight(1f).fillMaxHeight(),
+        )
+        StatTile(
+            emoji = stringResource(R.string.emoji_life),
+            label = stringResource(R.string.home_life_label),
+            value = stringResource(R.string.home_points_short, today.lifePoints),
+            sub = null,
+            color = TemariGreenLight,
+            accent = TemariGreen,
+            modifier = Modifier.weight(1f).fillMaxHeight(),
+        )
+    }
+}
+
+/** 数字を1つ見せる小さなタイル。 */
+@Composable
+private fun StatTile(
+    emoji: String,
+    label: String,
+    value: String,
+    sub: String?,
+    color: Color,
+    accent: Color,
+    modifier: Modifier = Modifier,
+) {
+    Surface(modifier = modifier, shape = MaterialTheme.shapes.large, color = color) {
+        Column(
+            modifier = Modifier.padding(UiConfig.ScreenPadding),
+            verticalArrangement = Arrangement.spacedBy(UiConfig.SmallSpacing / 2),
+        ) {
+            Text(text = "$emoji $label", style = MaterialTheme.typography.bodyLarge)
+            Text(text = value, style = MaterialTheme.typography.titleLarge, color = accent)
+            if (sub != null) {
+                Text(text = sub, style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+}
+
+/** 記録の状態。記録中は小さく点滅する点、止まっているときは目立つ枠と「再開する」ボタン。 */
 @Composable
 private fun RecordingStatusView(status: RecordingStatus, onResumeRecording: () -> Unit) {
     when (status) {
-        RecordingStatus.Recording -> Text(
-            text = stringResource(R.string.home_recording),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.outline,
-        )
+        RecordingStatus.Recording -> Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(UiConfig.SmallSpacing),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            PulsingDot(color = TemariGreen, size = UiConfig.SmallSpacing * 2)
+            Text(
+                text = stringResource(R.string.home_recording_text),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline,
+            )
+        }
         is RecordingStatus.Stopped -> Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(AttentionBackground, CardShape)
-                .border(UiConfig.AttentionBorderWidth, AttentionOrange, CardShape)
-                .padding(UiConfig.ScreenPadding),
+                .background(AttentionBackground, MaterialTheme.shapes.large)
+                .border(UiConfig.AttentionBorderWidth, AttentionOrange, MaterialTheme.shapes.large)
+                .padding(UiConfig.CardPadding),
             verticalArrangement = Arrangement.spacedBy(UiConfig.ButtonSpacing),
         ) {
             Text(
@@ -249,8 +359,38 @@ private fun RecordingStatusView(status: RecordingStatus, onResumeRecording: () -
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            BigButton(text = stringResource(R.string.home_button_resume), onClick = onResumeRecording)
+            BigButton(
+                text = stringResource(R.string.home_button_resume),
+                onClick = onResumeRecording,
+                emoji = stringResource(R.string.emoji_resume),
+            )
         }
+    }
+}
+
+/** ほかの画面へ進む大きなタイル。 */
+@Composable
+private fun MenuGrid(onOpenReview: () -> Unit, onOpenBingo: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(UiConfig.ButtonSpacing),
+    ) {
+        MenuTile(
+            emoji = stringResource(R.string.emoji_review),
+            text = stringResource(R.string.home_button_review),
+            color = TemariBlue,
+            contentColor = Color.White,
+            onClick = onOpenReview,
+            modifier = Modifier.weight(1f),
+        )
+        MenuTile(
+            emoji = stringResource(R.string.emoji_bingo),
+            text = stringResource(R.string.home_button_bingo),
+            color = TemariVermilion,
+            contentColor = Color.White,
+            onClick = onOpenBingo,
+            modifier = Modifier.weight(1f),
+        )
     }
 }
 
@@ -269,7 +409,7 @@ private fun previewState(scenario: MockScenario): HomeUiState = runBlocking {
     )
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 780)
+@Preview(showBackground = true, widthDp = 360, heightDp = 1200)
 @Composable
 private fun HomeScreenPreview(
     @PreviewParameter(TextSizePreviewProvider::class) textSize: TextSizeOption,
@@ -285,7 +425,7 @@ private fun HomeScreenPreview(
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 780, name = "記録が止まった")
+@Preview(showBackground = true, widthDp = 360, heightDp = 1200, name = "記録が止まった")
 @Composable
 private fun HomeScreenStoppedPreview(
     @PreviewParameter(TextSizePreviewProvider::class) textSize: TextSizeOption,
