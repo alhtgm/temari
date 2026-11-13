@@ -32,7 +32,7 @@ export function NotStaff() {
       <div className="rounded-3xl border border-border bg-surface p-8">
         <h1 className="text-xl font-bold">スタッフとして登録されていません</h1>
         <p className="mt-2 text-muted">
-          このアカウントでは利用者のデータを見られません。Supabase の管理画面で staff 表に登録してから、もう一度開いてください。
+          このアカウントには閲覧権限がありません。Supabase の管理画面で staff テーブルに登録したうえで、再度ログインしてください。
         </p>
         <form action={signOut} className="mt-6">
           <button type="submit" className="rounded-xl bg-primary px-4 py-2 font-bold text-white">

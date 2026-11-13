@@ -120,9 +120,9 @@ export function formatDateTime(iso: string | null): string {
 
 /** 何分前か（「3分前」「2時間前」）。 */
 export function ago(iso: string | null, now: Date = new Date()): string {
-  if (!iso) return "まだ記録がありません";
+  if (!iso) return "記録なし";
   const minutes = Math.round((now.getTime() - new Date(iso).getTime()) / 60000);
-  if (minutes < 1) return "たった今";
+  if (minutes < 1) return "1分以内";
   if (minutes < 60) return `${minutes}分前`;
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours}時間前`;

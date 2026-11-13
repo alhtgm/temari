@@ -10,7 +10,7 @@ export default function LoginPage() {
             🧶
           </div>
           <h1 className="mt-2 text-2xl font-bold">てまり スタッフ</h1>
-          <p className="mt-1 text-sm text-muted">利用者の活動を確かめる画面です</p>
+          <p className="mt-1 text-sm text-muted">利用者の活動データ管理画面</p>
         </div>
         <LoginForm />
       </div>

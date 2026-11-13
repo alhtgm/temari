@@ -25,7 +25,7 @@ export function StackedBarChart({ bars, goal }: { bars: Bar[]; goal?: number }) 
   return (
     <figure className="w-full">
       <svg viewBox={`0 0 100 ${CHART_HEIGHT + 24}`} preserveAspectRatio="none" className="h-56 w-full" role="img"
-        aria-label={bars.map((b) => `${b.label} 歩いた${b.walk} 家のこと${b.life}`).join("、")}>
+        aria-label={bars.map((b) => `${b.label} 歩行${b.walk}pt 生活活動${b.life}pt`).join("、")}>
         <defs>
           <pattern id="hatch" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <rect width="3" height="3" className="fill-green-soft" />
@@ -64,7 +64,7 @@ export function StackedBarChart({ bars, goal }: { bars: Bar[]; goal?: number }) 
         ))}
       </div>
       <figcaption className="mt-3 flex flex-wrap gap-4 text-xs text-muted">
-        <Legend swatch={<rect width="14" height="14" className="fill-primary" rx="3" />} text="歩いた" />
+        <Legend swatch={<rect width="14" height="14" className="fill-primary" rx="3" />} text="歩行" />
         <Legend
           swatch={
             <>
@@ -77,7 +77,7 @@ export function StackedBarChart({ bars, goal }: { bars: Bar[]; goal?: number }) 
               <rect width="14" height="14" fill="url(#hatch-legend)" rx="3" />
             </>
           }
-          text="家のこと（しゃせん）"
+          text="生活活動（斜線）"
         />
         {goal && (
           <Legend
@@ -109,7 +109,7 @@ function Legend({ swatch, text }: { swatch: React.ReactNode; text: string }) {
  */
 export function EnmoChart({ epochs }: { epochs: Epoch[] }) {
   if (epochs.length === 0) {
-    return <p className="py-10 text-center text-sm text-muted">この日の 10 秒ごとの記録はまだ届いていません</p>;
+    return <p className="py-10 text-center text-sm text-muted">この日の 10 秒ごとの記録はありません（未受信、または 30 日経過で削除済み）</p>;
   }
   const W = 960;
   const H = 220;
@@ -148,10 +148,10 @@ export function EnmoChart({ epochs }: { epochs: Epoch[] }) {
         </text>
       </svg>
       <figcaption className="mt-2 flex flex-wrap gap-4 text-xs text-muted">
-        <span>● <span className="text-primary">藍</span> = 歩いた</span>
-        <span>● <span className="text-green">若竹</span> = 家のこと</span>
-        <span>● 灰色 = 動いていない</span>
-        <span>上の端 = {Math.round(yMax)}mg 以上</span>
+        <span>● <span className="text-primary">藍</span> = 歩行</span>
+        <span>● <span className="text-green">緑</span> = 生活活動</span>
+        <span>● 灰 = 静止</span>
+        <span>縦軸上端 = {Math.round(yMax)}mg 以上</span>
       </figcaption>
     </figure>
   );
