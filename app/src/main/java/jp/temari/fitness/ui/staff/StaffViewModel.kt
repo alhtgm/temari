@@ -12,6 +12,8 @@ import jp.temari.fitness.data.sensing.ActivityStore
 import jp.temari.fitness.data.sensing.SensorDiagnostics
 import jp.temari.fitness.data.settings.DataSource
 import jp.temari.fitness.data.settings.SettingsRepository
+import jp.temari.fitness.data.sync.SyncManager
+import jp.temari.fitness.data.sync.SyncState
 import jp.temari.fitness.service.RecordingController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,6 +48,7 @@ data class SensorStatus(
  * @property dataSource 今のデータの出どころ。
  * @property userId 利用者ID。まだ発行していなければ null。
  * @property sensor 本物の計測の様子。
+ * @property sync Supabase への送信の様子。
  * @property showRestartDialog 「初回設定をやり直しますか？」の確認を出しているか。
  */
 data class StaffUiState(
@@ -53,6 +56,7 @@ data class StaffUiState(
     val dataSource: DataSource,
     val userId: String?,
     val sensor: SensorStatus,
+    val sync: SyncState,
     val showRestartDialog: Boolean = false,
 )
 
@@ -64,6 +68,7 @@ class StaffViewModel(
     private val settingsRepository: SettingsRepository,
     store: ActivityStore,
     private val recordingController: RecordingController,
+    private val syncManager: SyncManager,
     private val clock: Clock,
 ) : ViewModel() {
 
@@ -85,9 +90,10 @@ class StaffViewModel(
         scenarioSwitcher.scenario,
         settingsRepository.settings,
         sensorStatus,
+        syncManager.state,
         showRestartDialog,
-    ) { scenario, settings, sensor, dialog ->
-        StaffUiState(scenario, settings.dataSource, settings.userId, sensor, dialog)
+    ) { scenario, settings, sensor, sync, dialog ->
+        StaffUiState(scenario, settings.dataSource, settings.userId, sensor, sync, dialog)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     /** シナリオが選ばれたとき。モックを使っているときは、すべての画面にすぐ反映される。 */
@@ -106,6 +112,11 @@ class StaffViewModel(
     /** 「記録を始める」が押されたとき。 */
     fun onStartRecording() {
         recordingController.start()
+    }
+
+    /** 「今すぐ送る」が押されたとき。結果は送信の様子（sync）に出る。 */
+    fun onSyncNow() {
+        viewModelScope.launch { syncManager.syncNow() }
     }
 
     /** 「初回設定のやり直し」が押されたとき。まず確認を出す。 */
@@ -138,6 +149,7 @@ class StaffViewModel(
                     container.settingsRepository,
                     container.activityStore,
                     container.recordingController,
+                    container.syncManager,
                     container.clock,
                 )
             }

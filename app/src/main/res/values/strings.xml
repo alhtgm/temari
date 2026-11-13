@@ -253,6 +253,15 @@
     <string name="staff_today_steps_value">今日の歩数（本物）: %1$,d歩</string>
     <string name="staff_last_epoch_value">最後の%1$d秒: 歩数 %2$d・揺れ %3$.1f mg（家のことのしきい値 %4$.0f mg）</string>
 
+    <string name="staff_section_sync">データの送信（スタッフ用 Web 画面）</string>
+    <string name="staff_sync_not_configured">送り先が設定されていません（local.properties に supabase.url と supabase.publishableKey を書いてビルドします）</string>
+    <string name="staff_sync_last_value">最後に送った時刻: %1$s</string>
+    <string name="staff_sync_never">まだ送っていません</string>
+    <string name="staff_sync_pending_value">送れていない10秒ごとの記録: %1$,d件</string>
+    <string name="staff_sync_error_value">前回の送信の失敗の理由: %1$s</string>
+    <string name="staff_button_sync_now">今すぐ送る</string>
+    <string name="staff_button_syncing">送っています…</string>
+
     <!-- 記録中のお知らせ -->
     <string name="recording_channel_name">記録中のお知らせ</string>
     <string name="recording_channel_description">1日の動きを記録しているあいだ表示します</string>

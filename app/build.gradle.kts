@@ -1,6 +1,15 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+}
+
+// Supabase の接続先と公開用の鍵は、コミットしない local.properties から読む（リポジトリが公開のため）。
+// 書いていなければ空になり、アプリはデータを送らずに動く。
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
 }
 
 android {
@@ -13,6 +22,13 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
+
+        buildConfigField("String", "SUPABASE_URL", "\"${localProperties.getProperty("supabase.url", "")}\"")
+        buildConfigField(
+            "String",
+            "SUPABASE_PUBLISHABLE_KEY",
+            "\"${localProperties.getProperty("supabase.publishableKey", "")}\"",
+        )
     }
 
     buildTypes {
@@ -26,6 +42,8 @@ android {
     }
     buildFeatures {
         compose = true
+        // BuildConfig（ビルドのときに決まる値をコードから読むしくみ）を作る。Supabase の接続先に使う。
+        buildConfig = true
     }
 }
 

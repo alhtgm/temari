@@ -19,9 +19,11 @@ import jp.temari.fitness.MainActivity
 import jp.temari.fitness.R
 import jp.temari.fitness.TemariApplication
 import jp.temari.fitness.config.SensingConfig
+import jp.temari.fitness.config.SyncConfig
 import jp.temari.fitness.data.sensing.ActivityStore
 import jp.temari.fitness.data.sensing.EpochClassifier
 import jp.temari.fitness.data.sensing.StepDetector
+import jp.temari.fitness.data.sync.SyncManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -53,6 +55,7 @@ class RecordingService : Service(), SensorEventListener {
     private val stepDetector = StepDetector()
 
     private lateinit var store: ActivityStore
+    private lateinit var syncManager: SyncManager
     private lateinit var clock: Clock
     private var sensorManager: SensorManager? = null
     private var hasStepCounter = false
@@ -66,6 +69,7 @@ class RecordingService : Service(), SensorEventListener {
         super.onCreate()
         val container = (application as TemariApplication).container
         store = container.activityStore
+        syncManager = container.syncManager
         clock = container.clock
         createChannel()
         try {
@@ -89,6 +93,14 @@ class RecordingService : Service(), SensorEventListener {
             while (isActive) {
                 delay(SensingConfig.EPOCH_SECONDS * 1_000L)
                 store.addEpoch(LocalDateTime.now(clock), classifier.finish())
+                syncManager.refreshPendingCount()
+            }
+        }
+        scope.launch {
+            // 記録を始めたらまず1回送り、そのあと 15 分ごとに送る。失敗しても次の回にやり直すので、ここでは気にしない。
+            while (isActive) {
+                syncManager.syncNow()
+                delay(SyncConfig.SYNC_INTERVAL_MILLIS)
             }
         }
         scope.launch {

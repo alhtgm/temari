@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
     <!-- 画面が消えても加速度を読み続けるため、CPU を眠らせない。 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 記録を Supabase（スタッフ用 Web 画面のデータ）に送る。 -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- 端末を再起動したあとに記録を自動で始め直す。 -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 

@@ -1,5 +1,8 @@
 package jp.temari.fitness.data.sensing
 
+import jp.temari.fitness.data.sync.EpochQueue
+import jp.temari.fitness.data.sync.EpochRecord
+import jp.temari.fitness.data.sync.writeAtomically
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,8 +34,12 @@ data class SensorDiagnostics(
  * この1つの入れ物を両方から使う。サービスが値を足すと、画面にすぐ反映される。
  *
  * @param file 保存するファイル。null ならファイルに保存しない（テスト用）。
+ * @param queue Supabase に送る前の 10 秒ごとの記録をためておく待ち行列。
  */
-class ActivityStore(private val file: File?) {
+class ActivityStore(
+    private val file: File?,
+    private val queue: EpochQueue = EpochQueue(null),
+) {
 
     // ファイルは小さい（1日 4 行 × 120 日ほど）ので、作るときにすぐ読み込む。
     private val _log = MutableStateFlow(load())
@@ -53,6 +60,8 @@ class ActivityStore(private val file: File?) {
     /** 1区切りの結果を記録する。 */
     fun addEpoch(at: LocalDateTime, result: EpochResult) {
         _log.update { it.plusEpoch(at, result) }
+        // Supabase に送るため、10 秒ごとの記録も待ち行列に入れておく。
+        queue.add(EpochRecord.of(at, result))
         _diagnostics.update { it.copy(lastEnmoMg = result.meanEnmoMg, lastEpochSteps = result.steps) }
     }
 
@@ -72,19 +81,12 @@ class ActivityStore(private val file: File?) {
         _diagnostics.update { it.copy(hasStepCounter = has) }
     }
 
-    /** 今の記録をファイルに書き出す。古い日は消してから書く。 */
+    /** 今の記録と、送る前の待ち行列をファイルに書き出す。古い日は消してから書く。 */
     suspend fun save(today: LocalDate) {
+        queue.save()
         val target = file ?: return
         val text = ActivityLog.encode(_log.updateAndGet { it.pruned(today) })
-        withContext(Dispatchers.IO) {
-            // いったん別のファイルに書いてから名前を替える。書いている途中でアプリが止まっても、前の記録が壊れないように。
-            val temp = File(target.parentFile, target.name + ".tmp")
-            temp.writeText(text)
-            if (!temp.renameTo(target)) {
-                target.delete()
-                temp.renameTo(target)
-            }
-        }
+        withContext(Dispatchers.IO) { writeAtomically(target, text) }
     }
 
     private fun load(): ActivityLog {

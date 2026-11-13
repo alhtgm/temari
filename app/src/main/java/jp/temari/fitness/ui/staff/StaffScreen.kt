@@ -17,6 +17,7 @@ import jp.temari.fitness.config.TextSizeOption
 import jp.temari.fitness.data.fake.MockScenario
 import jp.temari.fitness.data.sensing.SensorDiagnostics
 import jp.temari.fitness.data.settings.DataSource
+import jp.temari.fitness.data.sync.SyncState
 import jp.temari.fitness.ui.components.BigButton
 import jp.temari.fitness.ui.components.ChoiceButtons
 import jp.temari.fitness.ui.components.ScreenFrame
@@ -35,6 +36,7 @@ data class StaffActions(
     val onScenarioSelect: (MockScenario) -> Unit,
     val onDataSourceSelect: (DataSource) -> Unit,
     val onStartRecording: () -> Unit,
+    val onSyncNow: () -> Unit,
     val onRestartClick: () -> Unit,
     val onRestartCancel: () -> Unit,
     val onRestartConfirm: () -> Unit,
@@ -57,6 +59,7 @@ fun StaffRoute(
             onScenarioSelect = viewModel::onScenarioSelect,
             onDataSourceSelect = viewModel::onDataSourceSelect,
             onStartRecording = viewModel::onStartRecording,
+            onSyncNow = viewModel::onSyncNow,
             onRestartClick = viewModel::onRestartClick,
             onRestartCancel = viewModel::onRestartCancel,
             onRestartConfirm = { viewModel.onRestartConfirm(onRestartOnboarding) },
@@ -102,6 +105,18 @@ fun StaffScreen(state: StaffUiState?, actions: StaffActions) {
                     BigButton(
                         text = stringResource(R.string.staff_button_start_recording),
                         onClick = actions.onStartRecording,
+                    )
+                }
+            }
+            TemariCard(title = stringResource(R.string.staff_section_sync)) {
+                SyncInfo(state.sync)
+                if (state.sync.configured) {
+                    BigButton(
+                        text = stringResource(
+                            if (state.sync.syncing) R.string.staff_button_syncing else R.string.staff_button_sync_now,
+                        ),
+                        onClick = { if (!state.sync.syncing) actions.onSyncNow() },
+                        primary = false,
                     )
                 }
             }
@@ -173,6 +188,23 @@ private fun SensorInfo(sensor: SensorStatus) {
     )
 }
 
+/** Supabase への送信の様子を1行ずつ出す。 */
+@Composable
+private fun SyncInfo(sync: SyncState) {
+    if (!sync.configured) {
+        SmallText(stringResource(R.string.staff_sync_not_configured))
+        return
+    }
+    SmallText(
+        stringResource(
+            R.string.staff_sync_last_value,
+            sync.lastSyncedAt?.format(RecordedAtFormat) ?: stringResource(R.string.staff_sync_never),
+        ),
+    )
+    SmallText(stringResource(R.string.staff_sync_pending_value, sync.pendingEpochs))
+    sync.lastError?.let { SmallText(stringResource(R.string.staff_sync_error_value, it)) }
+}
+
 /** 「初回設定をやり直しますか？」の確認。消える内容を書いておき、うっかり押しても戻れるようにする。 */
 @Composable
 private fun RestartDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
@@ -241,8 +273,9 @@ private fun StaffScreenPreview(
                     lastRecordedAt = null,
                     todaySteps = 2_345,
                 ),
+                sync = SyncState(configured = true, pendingEpochs = 12),
             ),
-            actions = StaffActions({}, {}, {}, {}, {}, {}, {}),
+            actions = StaffActions({}, {}, {}, {}, {}, {}, {}, {}),
         )
     }
 }

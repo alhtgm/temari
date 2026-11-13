@@ -10,6 +10,10 @@ import jp.temari.fitness.data.sensing.SensorActivityRepository
 import jp.temari.fitness.data.settings.DataSource
 import jp.temari.fitness.data.settings.DataStoreSettingsRepository
 import jp.temari.fitness.data.settings.SettingsRepository
+import jp.temari.fitness.data.sync.EpochQueue
+import jp.temari.fitness.data.sync.HttpSupabaseApi
+import jp.temari.fitness.data.sync.PrefsSyncStateStore
+import jp.temari.fitness.data.sync.SyncManager
 import jp.temari.fitness.service.RecordingController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -31,8 +35,25 @@ class AppContainer(context: Context) {
 
     private val goal: Flow<Int> = settingsRepository.settings.map { it.dailyGoal }.distinctUntilChanged()
 
+    /** Supabase に送る前の 10 秒ごとの記録の待ち行列。 */
+    private val epochQueue = EpochQueue(File(context.filesDir, "pending_epochs.csv"))
+
     /** 本物の計測の記録（端末内のファイル）。記録するサービスと画面の両方から使う。 */
-    val activityStore = ActivityStore(File(context.filesDir, "activity_log.csv"))
+    val activityStore = ActivityStore(File(context.filesDir, "activity_log.csv"), epochQueue)
+
+    /** 記録を Supabase に送る係。接続先が local.properties に書かれていなければ何も送らない。 */
+    val syncManager = SyncManager(
+        api = if (BuildConfig.SUPABASE_URL.isNotBlank() && BuildConfig.SUPABASE_PUBLISHABLE_KEY.isNotBlank()) {
+            HttpSupabaseApi(BuildConfig.SUPABASE_URL, BuildConfig.SUPABASE_PUBLISHABLE_KEY)
+        } else {
+            null
+        },
+        stateStore = PrefsSyncStateStore(context),
+        store = activityStore,
+        queue = epochQueue,
+        settings = settingsRepository.settings,
+        clock = clock,
+    )
 
     /** 記録するサービスを始めたり止めたりする窓口。 */
     val recordingController = RecordingController(context.applicationContext, settingsRepository.settings)
