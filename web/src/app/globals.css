@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/*
+ * 色はアプリと同じ「手まり」の和の配色（藍・朱・若竹・山吹）にそろえる。
+ * スタッフが長い時間見ても疲れないよう、ダークモードも用意する。
+ */
+:root {
+  --background: #fff9f2;
+  --surface: #ffffff;
+  --foreground: #1c1b1f;
+  --muted: #5a5766;
+  --border: #e6e0d8;
+  --primary: #2f3e9e;
+  --primary-soft: #e6e9fb;
+  --vermilion: #c2410c;
+  --vermilion-soft: #ffe8da;
+  --green: #1f7a4d;
+  --green-soft: #ddf3e6;
+  --yellow: #f2a900;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #15141a;
+    --surface: #1f1e26;
+    --foreground: #ecebf2;
+    --muted: #a9a6b6;
+    --border: #34323f;
+    --primary: #8f9bf0;
+    --primary-soft: #262b52;
+    --vermilion: #ff9a6b;
+    --vermilion-soft: #4a2414;
+    --green: #6fd3a0;
+    --green-soft: #173527;
+    --yellow: #f7c548;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-vermilion: var(--vermilion);
+  --color-vermilion-soft: var(--vermilion-soft);
+  --color-green: var(--green);
+  --color-green-soft: var(--green-soft);
+  --color-yellow: var(--yellow);
+  /* 日本語がきれいに見えるよう、端末に入っている日本語の書体を使う（Web から書体を読み込まない）。 */
+  --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}

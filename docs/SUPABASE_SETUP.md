@@ -53,3 +53,12 @@
 ## 6. 個人の情報について
 - サーバーには **よび名** と **10秒ごとの動きの記録** が入る。生活のようすが細かく分かるデータなので、実際の利用者に使ってもらう前に、施設と利用者（ご家族）の同意を取ること。
 - 端末を別の利用者に渡すときは、スタッフ用画面の「初回設定のやり直し」で新しい利用者IDにする。前の利用者のデータを消すときは、管理画面の SQL Editor で `delete from public.app_users where id = '利用者ID';`（関係する記録もいっしょに消える）。
+
+## 7. スタッフ用 Web 画面を PC で動かす
+1. `web/.env.local` を作り、次の2行を書く（このファイルはコミットしない）。
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://iymxpeukzjgjnwxnjxwv.supabase.co
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...（管理画面の Settings → API Keys の Publishable key）
+   ```
+2. `cd web` → `npm install`（初回だけ）→ `npm run dev`
+3. ブラウザで http://localhost:3000 を開き、スタッフのメールアドレスとパスワードでログインする。
